@@ -20,15 +20,13 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["candidate", "employee"],
       default: "candidate",
     },
 
-    company: {
-      type: String,
+    skills: {
+      type: Array,
+      default: [],
     },
-
-    skills: [String],
   },
   {
     timestamps: true,
