@@ -4,8 +4,8 @@ const router = express.Router();
 
 const Referral = require("../models/Referral");
 
-
-// GET REFERRALS
+const authMiddleware = require("../middleware/authMiddleware");
+// GET ALL REFERRALS
 router.get("/", async (req, res) => {
   try {
 
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
 
 
 // ADD REFERRAL
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
 
     const { company, role, location } = req.body;
@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
 
 
 // DELETE REFERRAL
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
 
     await Referral.findByIdAndDelete(req.params.id);
@@ -71,6 +71,44 @@ router.delete("/:id", async (req, res) => {
     res.json({
       success: true,
       message: "Referral Deleted",
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+
+  }
+});
+
+
+// UPDATE REFERRAL
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+
+    const { company, role, location } = req.body;
+
+    const updatedReferral =
+      await Referral.findByIdAndUpdate(
+        req.params.id,
+        {
+          company,
+          role,
+          location,
+        },
+        {
+          new: true,
+        }
+      );
+
+    res.json({
+      success: true,
+      message: "Referral Updated",
+      referral: updatedReferral,
     });
 
   } catch (error) {
