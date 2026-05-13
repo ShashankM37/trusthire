@@ -1,114 +1,89 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login() {
+  const router = useRouter();
 
-  const handleLogin = async () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (res.ok) {
-        alert("Login Successful");
-
-        console.log(data);
-
+      if (response.ok) {
         localStorage.setItem("token", data.token);
+
+        alert("Login Successful 🚀");
+
+        router.push("/dashboard");
       } else {
-        alert(data.message || "Login Failed");
+        alert(data.message);
       }
     } catch (error) {
       console.log(error);
+
       alert("Server Error");
     }
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#111827",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "30px",
-          borderRadius: "10px",
-          width: "320px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "15px",
-        }}
+    <div className="flex items-center justify-center h-screen bg-black">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-10 rounded-2xl w-96"
       >
-        <h2
-          style={{
-            textAlign: "center",
-            color: "black",
-          }}
-        >
+        <h1 className="text-3xl font-bold mb-6 text-center">
           TrustHire Login
-        </h2>
+        </h1>
 
         <input
           type="email"
+          name="email"
           placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            padding: "10px",
-            borderRadius: "5px",
-            border: "1px solid gray",
-            color: "black",
-            fontSize: "16px",
-          }}
+          className="w-full border p-3 mb-4 rounded-lg"
+          onChange={handleChange}
         />
 
         <input
           type="password"
+          name="password"
           placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            padding: "10px",
-            borderRadius: "5px",
-            border: "1px solid gray",
-            color: "black",
-            fontSize: "16px",
-          }}
+          className="w-full border p-3 mb-4 rounded-lg"
+          onChange={handleChange}
         />
 
         <button
-          onClick={handleLogin}
-          style={{
-            padding: "10px",
-            backgroundColor: "#2563eb",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
+          type="submit"
+          className="w-full bg-blue-600 text-white p-3 rounded-lg"
         >
           Login
         </button>
-      </div>
+      </form>
     </div>
   );
 }
