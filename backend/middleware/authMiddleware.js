@@ -1,17 +1,25 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = async (req, res, next) => {
+const authMiddleware = async (
+  req,
+  res,
+  next
+) => {
 
   try {
 
-    const token = req.headers.authorization;
+    // GET TOKEN
+    const token =
+      req.headers.authorization?.split(
+        " "
+      )[1];
 
-    // CHECK TOKEN
+    // NO TOKEN
     if (!token) {
 
       return res.status(401).json({
         success: false,
-        message: "No Token Provided",
+        message: "No token provided",
       });
 
     }
@@ -19,11 +27,11 @@ const authMiddleware = async (req, res, next) => {
     // VERIFY TOKEN
     const decoded = jwt.verify(
       token,
-      "trusthire-secret-key"
+      process.env.JWT_SECRET
     );
 
-    // SAVE USER DATA
-    req.user = decoded;
+    // SAVE USER ID
+    req.userId = decoded.id;
 
     next();
 
@@ -31,13 +39,12 @@ const authMiddleware = async (req, res, next) => {
 
     console.log(error);
 
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
-      message: "Invalid Token",
+      message: "Invalid token",
     });
 
   }
-
 };
 
 module.exports = authMiddleware;
