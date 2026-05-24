@@ -1,15 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 
+import { motion } from "framer-motion";
+
 import {
   Eye,
   EyeOff,
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+  Loader2,
+  Mail,
+  Lock,
+  Star,
+  Briefcase,
+  Globe,
+  TrendingUp,
+  ChevronRight,
   CheckCircle2,
+  Users,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -19,24 +33,56 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
   const [success, setSuccess] =
     useState("");
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    remember: false,
-  });
+  const [formData, setFormData] =
+    useState({
+      email: "",
+      password: "",
+      remember: false,
+    });
 
+  // =========================
+  // LOAD REMEMBERED EMAIL
+  // =========================
+  useEffect(() => {
+
+    const rememberedEmail =
+      localStorage.getItem(
+        "rememberEmail"
+      );
+
+    if (rememberedEmail) {
+
+      setFormData((prev) => ({
+        ...prev,
+        email:
+          rememberedEmail,
+        remember: true,
+      }));
+
+    }
+
+  }, []);
+
+  // =========================
   // HANDLE INPUT
+  // =========================
   const handleChange = (e) => {
 
-    const { name, value, type, checked } =
-      e.target;
+    const {
+      name,
+      value,
+      type,
+      checked,
+    } = e.target;
 
     setFormData({
       ...formData,
@@ -45,178 +91,321 @@ export default function LoginPage() {
           ? checked
           : value,
     });
+
   };
 
+  // =========================
   // LOGIN
-  const handleLogin = async (e) => {
+  // =========================
+  const handleLogin =
+    async (e) => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    setError("");
+      setError("");
 
-    setSuccess("");
+      setSuccess("");
 
-    setLoading(true);
+      setLoading(true);
 
-    try {
+      try {
 
-      const response = await fetch(
-        "http://localhost:5000/api/auth/login",
-        {
-          method: "POST",
+        const response =
+          await fetch(
+            "http://localhost:5000/api/auth/login",
+            {
+              method: "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
 
-          body: JSON.stringify({
-            email: formData.email,
-            password:
-              formData.password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-
-        setSuccess(
-          "Login successful 🚀"
-        );
-
-        // SAVE TOKEN
-        localStorage.setItem(
-          "token",
-          data.token
-        );
-
-        // SAVE USER
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data.user)
-        );
-
-        // REMEMBER EMAIL
-        if (formData.remember) {
-
-          localStorage.setItem(
-            "rememberEmail",
-            formData.email
+              body: JSON.stringify({
+                email:
+                  formData.email,
+                password:
+                  formData.password,
+              }),
+            }
           );
+
+        const data =
+          await response.json();
+
+        if (data.success) {
+
+          setSuccess(
+            "Login successful 🚀"
+          );
+
+          // SAVE TOKEN
+          localStorage.setItem(
+            "token",
+            data.token
+          );
+
+          // SAVE USER
+          localStorage.setItem(
+            "user",
+            JSON.stringify(
+              data.user
+            )
+          );
+
+          // REMEMBER EMAIL
+          if (
+            formData.remember
+          ) {
+
+            localStorage.setItem(
+              "rememberEmail",
+              formData.email
+            );
+
+          } else {
+
+            localStorage.removeItem(
+              "rememberEmail"
+            );
+
+          }
+
+          setTimeout(() => {
+
+            router.push(
+              "/dashboard"
+            );
+
+          }, 1800);
 
         } else {
 
-          localStorage.removeItem(
-            "rememberEmail"
+          setError(
+            data.message
           );
 
         }
 
-        // REDIRECT
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 1500);
+      } catch (error) {
 
-      } else {
+        console.log(error);
 
-        setError(data.message);
+        setError(
+          "Something went wrong"
+        );
+
+      } finally {
+
+        setLoading(false);
 
       }
-
-    } catch (error) {
-
-      console.log(error);
-
-      setError("Server Error");
-
-    } finally {
-
-      setLoading(false);
-
-    }
-  };
+    };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
 
       {/* BACKGROUND */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 -z-10">
 
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-600/30 blur-[120px] rounded-full" />
+        <div className="absolute left-[5%] top-[5%] h-[450px] w-[450px] rounded-full bg-cyan-500/20 blur-[120px]" />
 
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[5%] right-[5%] h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:32px_32px]" />
+        <div className="absolute left-[40%] top-[40%] h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[120px]" />
 
       </div>
 
-      <div className="relative z-10 grid lg:grid-cols-2 min-h-screen">
+      {/* GRID */}
+      <div className="absolute inset-0 -z-10 opacity-[0.05] bg-[linear-gradient(to_right,#ffffff22_1px,transparent_1px),linear-gradient(to_bottom,#ffffff22_1px,transparent_1px)] bg-[size:45px_45px]" />
+
+      <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
 
         {/* LEFT SIDE */}
-        <div className="hidden lg:flex flex-col justify-between p-16">
+        <section className="hidden flex-col justify-between border-r border-white/10 bg-white/[0.03] p-16 backdrop-blur-2xl lg:flex">
 
+          {/* TOP */}
           <div>
 
             {/* LOGO */}
-            <div className="flex items-center gap-3 mb-10">
+            <Link
+              href="/"
+              className="mb-16 flex items-center gap-4"
+            >
 
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 shadow-2xl" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/20">
 
-              <h1 className="text-3xl font-bold tracking-tight">
-                TrustHire
-              </h1>
+                <Briefcase
+                  className="text-black"
+                />
+
+              </div>
+
+              <div>
+
+                <h1 className="text-3xl font-black">
+                  TrustHire
+                </h1>
+
+                <p className="text-sm text-zinc-500">
+                  Trusted Career Network
+                </p>
+
+              </div>
+
+            </Link>
+
+            {/* HERO */}
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 30,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.7,
+              }}
+            >
+
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-400">
+
+                <Sparkles size={16} />
+
+                Trusted by startups worldwide
+
+              </div>
+
+              <h2 className="max-w-xl text-6xl font-black leading-[1.05]">
+
+                Welcome Back.
+                <br />
+
+                Continue Building
+                <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                  {" "}
+                  The Future
+                </span>
+
+              </h2>
+
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-zinc-400">
+
+                Access your premium hiring
+                dashboard and continue growing
+                with elite talent and trusted
+                referrals.
+
+              </p>
+
+            </motion.div>
+
+            {/* STATS */}
+            <div className="mt-14 grid grid-cols-3 gap-5">
+
+              {[
+                {
+                  value:
+                    "12K+",
+                  label:
+                    "Professionals",
+                },
+
+                {
+                  value:
+                    "320+",
+                  label:
+                    "Companies",
+                },
+
+                {
+                  value:
+                    "98%",
+                  label:
+                    "Verified",
+                },
+              ].map(
+                (
+                  item,
+                  index
+                ) => (
+
+                  <div
+                    key={index}
+                    className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
+                  >
+
+                    <h2 className="text-4xl font-black text-cyan-400">
+
+                      {item.value}
+
+                    </h2>
+
+                    <p className="mt-2 text-sm text-zinc-500">
+
+                      {item.label}
+
+                    </p>
+
+                  </div>
+
+                )
+              )}
 
             </div>
 
-            {/* HEADLINE */}
-            <h2 className="text-6xl font-bold leading-tight max-w-xl">
-
-              Welcome Back.
-              <br />
-
-              Continue Building
-              <br />
-
-              The Future.
-
-            </h2>
-
-            <p className="text-zinc-400 text-lg mt-8 max-w-lg leading-relaxed">
-
-              Access your premium hiring
-              dashboard and continue scaling your
-              startup with elite talent.
-
-            </p>
-
           </div>
 
-          {/* SOCIAL PROOF */}
-          <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-lg">
+          {/* TESTIMONIAL */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            className="rounded-[32px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl"
+          >
 
-            <div className="flex items-center gap-2 text-cyan-400 mb-4">
+            {/* STARS */}
+            <div className="mb-5 flex items-center gap-2 text-yellow-400">
 
-              <CheckCircle2 size={20} />
+              {[...Array(5)].map(
+                (
+                  _,
+                  index
+                ) => (
 
-              <span className="text-sm">
-                Trusted by founders worldwide
-              </span>
+                  <Star
+                    key={index}
+                    size={18}
+                    fill="currentColor"
+                  />
+
+                )
+              )}
 
             </div>
 
             <p className="text-lg leading-relaxed text-zinc-300">
 
-              “TrustHire helped us hire faster
-              than LinkedIn and traditional job
-              boards combined.”
+              “TrustHire helped us hire
+              faster than LinkedIn and
+              traditional job boards combined.”
 
             </p>
 
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-8 flex items-center gap-4">
 
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 text-xl font-black">
+
+                D
+
+              </div>
 
               <div>
 
@@ -224,101 +413,198 @@ export default function LoginPage() {
                   Daniel Carter
                 </h4>
 
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-zinc-500">
+
                   CEO, HyperScale AI
+
                 </p>
 
               </div>
 
             </div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </section>
 
         {/* RIGHT SIDE */}
-        <div className="flex items-center justify-center px-6 py-12">
+        <section className="flex items-center justify-center px-6 py-14">
 
-          <div className="relative w-full max-w-xl">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.6,
+            }}
+            className="relative w-full max-w-xl"
+          >
 
             {/* GLOW */}
-            <div className="absolute -inset-[1px] rounded-[32px] bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 blur opacity-30" />
+            <div className="absolute -inset-[1px] rounded-[36px] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 opacity-30 blur-xl" />
 
             {/* CARD */}
-            <div className="relative bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[32px] p-8 md:p-10 shadow-2xl">
+            <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl md:p-10">
 
-              <div className="mb-8">
+              {/* TOP */}
+              <div className="mb-10">
 
-                <h1 className="text-4xl font-bold">
-                  Login
+                <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-r from-cyan-400 to-purple-600 shadow-2xl shadow-cyan-500/20">
+
+                  <ShieldCheck
+                    className="text-black"
+                    size={36}
+                  />
+
+                </div>
+
+                <h1 className="text-5xl font-black leading-tight">
+
+                  Login To
+                  <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                    {" "}
+                    TrustHire
+                  </span>
+
                 </h1>
 
-                <p className="text-zinc-400 mt-2">
-                  Access your premium dashboard.
+                <p className="mt-5 text-lg text-zinc-400">
+
+                  Access your premium dashboard
+                  and continue building your
+                  professional network.
+
                 </p>
 
               </div>
 
               {/* ERROR */}
               {error && (
-                <div className="mb-5 bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-2xl">
+
+                <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-400">
+
                   {error}
+
                 </div>
+
               )}
 
               {/* SUCCESS */}
               {success && (
-                <div className="mb-5 bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-2xl">
+
+                <div className="mb-6 rounded-2xl border border-green-500/20 bg-green-500/10 px-5 py-4 text-green-400">
+
                   {success}
+
                 </div>
+
               )}
 
+              {/* FORM */}
               <form
-                onSubmit={handleLogin}
-                className="space-y-5"
+                onSubmit={
+                  handleLogin
+                }
+                className="space-y-6"
               >
 
                 {/* EMAIL */}
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                />
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+
+                    Email Address
+
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Mail
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      type="email"
+                      name="email"
+                      value={
+                        formData.email
+                      }
+                      placeholder="you@example.com"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
+
+                </div>
 
                 {/* PASSWORD */}
-                <div className="relative">
+                <div>
 
-                  <input
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                  />
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowPassword(
-                        !showPassword
-                      )
-                    }
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400"
-                  >
-                    {showPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
+                    Password
+
+                  </label>
+
+                  <div className="group flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 transition focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Lock
+                      className="text-zinc-500 group-focus-within:text-cyan-400"
+                      size={20}
+                    />
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="password"
+                      placeholder="Enter password"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          !showPassword
+                        )
+                      }
+                      className="text-zinc-500 transition hover:text-cyan-400"
+                    >
+
+                      {showPassword ? (
+
+                        <EyeOff
+                          size={20}
+                        />
+
+                      ) : (
+
+                        <Eye
+                          size={20}
+                        />
+
+                      )}
+
+                    </button>
+
+                  </div>
 
                 </div>
 
@@ -330,8 +616,13 @@ export default function LoginPage() {
                     <input
                       type="checkbox"
                       name="remember"
-                      onChange={handleChange}
-                      className="accent-cyan-400"
+                      checked={
+                        formData.remember
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      className="h-4 w-4 accent-cyan-400"
                     />
 
                     Remember me
@@ -340,9 +631,11 @@ export default function LoginPage() {
 
                   <Link
                     href="/forgot-password"
-                    className="text-cyan-400 hover:text-cyan-300"
+                    className="font-medium text-cyan-400 transition hover:text-cyan-300"
                   >
+
                     Forgot Password?
+
                   </Link>
 
                 </div>
@@ -351,64 +644,109 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-black font-bold text-lg hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] transition-all duration-300"
+                  className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 py-5 text-lg font-black text-black transition hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] disabled:opacity-70"
                 >
-                  {loading
-                    ? "Signing In..."
-                    : "Continue"}
+
+                  {loading ? (
+
+                    <>
+
+                      <Loader2
+                        className="animate-spin"
+                        size={22}
+                      />
+
+                      Signing In...
+
+                    </>
+
+                  ) : (
+
+                    <>
+
+                      Continue
+
+                      <ArrowRight
+                        className="transition group-hover:translate-x-1"
+                        size={20}
+                      />
+
+                    </>
+
+                  )}
+
                 </button>
 
               </form>
 
               {/* DIVIDER */}
-              <div className="flex items-center gap-4 my-8">
+              <div className="my-8 flex items-center gap-4">
 
-                <div className="flex-1 h-px bg-white/10" />
+                <div className="h-px flex-1 bg-white/10" />
 
-                <span className="text-zinc-500 text-sm">
+                <span className="text-sm text-zinc-500">
+
                   or continue with
+
                 </span>
 
-                <div className="flex-1 h-px bg-white/10" />
+                <div className="h-px flex-1 bg-white/10" />
 
               </div>
 
-              {/* SOCIAL BUTTONS */}
+              {/* SOCIAL */}
               <div className="grid grid-cols-3 gap-4">
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  Google
-                </button>
+                {[
+                  "Google",
+                  "GitHub",
+                  "Apple",
+                ].map(
+                  (
+                    item,
+                    index
+                  ) => (
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  GitHub
-                </button>
+                    <button
+                      key={index}
+                      className="rounded-2xl border border-white/10 bg-white/5 py-4 font-semibold transition hover:bg-white/10"
+                    >
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  Apple
-                </button>
+                      {item}
+
+                    </button>
+
+                  )
+                )}
 
               </div>
 
               {/* REGISTER */}
-              <p className="text-center text-zinc-400 mt-8">
+              <p className="mt-10 text-center text-zinc-500">
 
-                Don’t have an account?{" "}
+                Don’t have an account?
+                {" "}
 
                 <Link
                   href="/register"
-                  className="text-cyan-400 hover:text-cyan-300 font-medium"
+                  className="inline-flex items-center gap-1 font-semibold text-cyan-400 transition hover:text-cyan-300"
                 >
+
                   Register
+
+                  <ChevronRight
+                    size={16}
+                  />
+
                 </Link>
 
               </p>
 
             </div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </section>
 
       </div>
 

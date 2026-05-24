@@ -6,10 +6,24 @@ import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 
+import { motion } from "framer-motion";
+
 import {
   Eye,
   EyeOff,
+  ShieldCheck,
+  Sparkles,
   CheckCircle2,
+  ArrowRight,
+  Loader2,
+  Lock,
+  Mail,
+  User,
+  Star,
+  Briefcase,
+  Globe,
+  Users,
+  ChevronRight,
 } from "lucide-react";
 
 export default function RegisterPage() {
@@ -19,44 +33,87 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [showConfirmPassword, setShowConfirmPassword] =
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
+
+  const [loading, setLoading] =
     useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [error, setError] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [success, setSuccess] =
+    useState("");
 
-  const [success, setSuccess] = useState("");
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      remember: false,
+      terms: false,
+    });
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    remember: false,
-    terms: false,
-  });
-
+  // =========================
   // PASSWORD STRENGTH
-  const getPasswordStrength = () => {
+  // =========================
+  const getPasswordStrength =
+    () => {
 
-    if (formData.password.length < 6)
-      return "Weak";
+      const password =
+        formData.password;
 
-    if (formData.password.length < 10)
-      return "Medium";
+      if (
+        password.length < 6
+      ) {
 
-    return "Strong";
-  };
+        return {
+          text: "Weak",
+          color:
+            "text-red-400",
+          width: "w-1/3",
+        };
+
+      }
+
+      if (
+        password.length < 10
+      ) {
+
+        return {
+          text: "Medium",
+          color:
+            "text-yellow-400",
+          width: "w-2/3",
+        };
+
+      }
+
+      return {
+        text: "Strong",
+        color:
+          "text-green-400",
+        width: "w-full",
+      };
+    };
 
   const passwordStrength =
     getPasswordStrength();
 
+  // =========================
   // HANDLE INPUT
+  // =========================
   const handleChange = (e) => {
 
-    const { name, value, type, checked } =
-      e.target;
+    const {
+      name,
+      value,
+      type,
+      checked,
+    } = e.target;
 
     setFormData({
       ...formData,
@@ -65,173 +122,315 @@ export default function RegisterPage() {
           ? checked
           : value,
     });
+
   };
 
+  // =========================
   // REGISTER
-  const handleRegister = async (e) => {
+  // =========================
+  const handleRegister =
+    async (e) => {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    setError("");
-    setSuccess("");
+      setError("");
 
-    // VALIDATION
-    if (
-      formData.password !==
-      formData.confirmPassword
-    ) {
+      setSuccess("");
 
-      return setError(
-        "Passwords do not match"
-      );
+      // VALIDATION
+      if (
+        formData.password !==
+        formData.confirmPassword
+      ) {
 
-    }
-
-    if (!formData.terms) {
-
-      return setError(
-        "Please accept Terms & Conditions"
-      );
-
-    }
-
-    setLoading(true);
-
-    try {
-
-      const response = await fetch(
-        "http://localhost:5000/api/auth/register",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-
-        setSuccess(
-          "OTP sent to your email 🚀"
+        return setError(
+          "Passwords do not match"
         );
-
-        localStorage.setItem(
-          "verifyEmail",
-          formData.email
-        );
-
-        setTimeout(() => {
-          router.push("/verify-otp");
-        }, 1500);
-
-      } else {
-
-        setError(data.message);
 
       }
 
-    } catch (error) {
+      if (
+        !formData.terms
+      ) {
 
-      console.log(error);
+        return setError(
+          "Please accept Terms & Conditions"
+        );
 
-      setError("Server Error");
+      }
 
-    } finally {
+      setLoading(true);
 
-      setLoading(false);
+      try {
 
-    }
-  };
+        const response =
+          await fetch(
+            "http://localhost:5000/api/auth/register",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+
+              body: JSON.stringify({
+                name:
+                  formData.name,
+                email:
+                  formData.email,
+                password:
+                  formData.password,
+              }),
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (data.success) {
+
+          setSuccess(
+            "OTP sent to your email 🚀"
+          );
+
+          localStorage.setItem(
+            "verifyEmail",
+            formData.email
+          );
+
+          setTimeout(() => {
+
+            router.push(
+              "/verify-otp"
+            );
+
+          }, 1800);
+
+        } else {
+
+          setError(
+            data.message
+          );
+
+        }
+
+      } catch (error) {
+
+        console.log(error);
+
+        setError(
+          "Something went wrong"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-black text-white">
 
       {/* BACKGROUND */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 -z-10">
 
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-600/30 blur-[120px] rounded-full" />
+        <div className="absolute left-[5%] top-[5%] h-[450px] w-[450px] rounded-full bg-cyan-500/20 blur-[120px]" />
 
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[5%] right-[5%] h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:32px_32px]" />
+        <div className="absolute left-[40%] top-[40%] h-[300px] w-[300px] rounded-full bg-blue-500/10 blur-[120px]" />
 
       </div>
 
-      <div className="relative z-10 grid lg:grid-cols-2 min-h-screen">
+      {/* GRID */}
+      <div className="absolute inset-0 -z-10 opacity-[0.05] bg-[linear-gradient(to_right,#ffffff22_1px,transparent_1px),linear-gradient(to_bottom,#ffffff22_1px,transparent_1px)] bg-[size:45px_45px]" />
+
+      <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
 
         {/* LEFT SIDE */}
-        <div className="hidden lg:flex flex-col justify-between p-16">
+        <section className="hidden flex-col justify-between border-r border-white/10 bg-white/[0.03] p-16 backdrop-blur-2xl lg:flex">
 
+          {/* TOP */}
           <div>
 
-            <div className="flex items-center gap-3 mb-10">
+            {/* LOGO */}
+            <Link
+              href="/"
+              className="mb-16 flex items-center gap-4"
+            >
 
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 shadow-2xl" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/20">
 
-              <h1 className="text-3xl font-bold tracking-tight">
-                TrustHire
-              </h1>
+                <Briefcase
+                  className="text-black"
+                />
+
+              </div>
+
+              <div>
+
+                <h1 className="text-3xl font-black">
+                  TrustHire
+                </h1>
+
+                <p className="text-sm text-zinc-500">
+                  Trusted Career Network
+                </p>
+
+              </div>
+
+            </Link>
+
+            {/* HERO */}
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 30,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.7,
+              }}
+            >
+
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-400">
+
+                <Sparkles size={16} />
+
+                Trusted by startups worldwide
+
+              </div>
+
+              <h2 className="max-w-xl text-6xl font-black leading-[1.05]">
+
+                Build Your
+                <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                  {" "}
+                  Future Career
+                </span>
+
+              </h2>
+
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-zinc-400">
+
+                Connect with elite companies,
+                verified referrals, and global
+                startup opportunities through
+                TrustHire.
+
+              </p>
+
+            </motion.div>
+
+            {/* STATS */}
+            <div className="mt-14 grid grid-cols-3 gap-5">
+
+              {[
+                {
+                  value:
+                    "12K+",
+                  label:
+                    "Professionals",
+                },
+
+                {
+                  value:
+                    "320+",
+                  label:
+                    "Companies",
+                },
+
+                {
+                  value:
+                    "98%",
+                  label:
+                    "Verified",
+                },
+              ].map(
+                (
+                  item,
+                  index
+                ) => (
+
+                  <div
+                    key={index}
+                    className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
+                  >
+
+                    <h2 className="text-4xl font-black text-cyan-400">
+
+                      {item.value}
+
+                    </h2>
+
+                    <p className="mt-2 text-sm text-zinc-500">
+
+                      {item.label}
+
+                    </p>
+
+                  </div>
+
+                )
+              )}
 
             </div>
-
-            <h2 className="text-6xl font-bold leading-tight max-w-xl">
-
-              Hire Smarter.
-              <br />
-
-              Build Faster.
-              <br />
-
-              Scale Globally.
-
-            </h2>
-
-            <p className="text-zinc-400 text-lg mt-8 max-w-lg leading-relaxed">
-
-              The premium hiring platform helping
-              startups discover elite developers,
-              designers, and creators faster than
-              ever before.
-
-            </p>
 
           </div>
 
           {/* TESTIMONIAL */}
-          <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-lg">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            className="rounded-[32px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl"
+          >
 
-            <div className="flex items-center gap-2 text-cyan-400 mb-4">
+            <div className="mb-5 flex items-center gap-2 text-yellow-400">
 
-              <CheckCircle2 size={20} />
+              {[...Array(5)].map(
+                (
+                  _,
+                  index
+                ) => (
 
-              <span className="text-sm">
-                Trusted by 12,000+ startups
-              </span>
+                  <Star
+                    key={index}
+                    size={18}
+                    fill="currentColor"
+                  />
+
+                )
+              )}
 
             </div>
 
             <p className="text-lg leading-relaxed text-zinc-300">
 
-              “TrustHire completely transformed
-              our recruitment workflow. We hired
-              our first 10 engineers in less than
-              2 weeks.”
+              “TrustHire helped us hire
+              incredible engineers through
+              verified referrals instead of
+              random applications.”
 
             </p>
 
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-8 flex items-center gap-4">
 
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-purple-600 text-xl font-black">
+
+                S
+
+              </div>
 
               <div>
 
@@ -239,185 +438,337 @@ export default function RegisterPage() {
                   Sarah Mitchell
                 </h4>
 
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-zinc-500">
+
                   Founder, Nova Labs
+
                 </p>
 
               </div>
 
             </div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </section>
 
         {/* RIGHT SIDE */}
-        <div className="flex items-center justify-center px-6 py-12">
+        <section className="flex items-center justify-center px-6 py-14">
 
-          <div className="relative w-full max-w-xl">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.6,
+            }}
+            className="relative w-full max-w-xl"
+          >
 
             {/* GLOW */}
-            <div className="absolute -inset-[1px] rounded-[32px] bg-gradient-to-r from-cyan-500 via-purple-500 to-blue-500 blur opacity-30" />
+            <div className="absolute -inset-[1px] rounded-[36px] bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 opacity-30 blur-xl" />
 
             {/* CARD */}
-            <div className="relative bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[32px] p-8 md:p-10 shadow-2xl">
+            <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl md:p-10">
 
-              <div className="mb-8">
+              {/* TOP */}
+              <div className="mb-10">
 
-                <h1 className="text-4xl font-bold">
-                  Create Account
+                <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-r from-cyan-400 to-purple-600 shadow-2xl shadow-cyan-500/20">
+
+                  <ShieldCheck
+                    className="text-black"
+                    size={36}
+                  />
+
+                </div>
+
+                <h1 className="text-5xl font-black leading-tight">
+
+                  Create
+                  <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                    {" "}
+                    Account
+                  </span>
+
                 </h1>
 
-                <p className="text-zinc-400 mt-2">
+                <p className="mt-5 text-lg text-zinc-400">
+
                   Start your premium onboarding
-                  experience.
+                  experience with TrustHire.
+
                 </p>
 
               </div>
 
               {/* ERROR */}
               {error && (
-                <div className="mb-5 bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-2xl">
+
+                <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-red-400">
+
                   {error}
+
                 </div>
+
               )}
 
               {/* SUCCESS */}
               {success && (
-                <div className="mb-5 bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-2xl">
+
+                <div className="mb-6 rounded-2xl border border-green-500/20 bg-green-500/10 px-5 py-4 text-green-400">
+
                   {success}
+
                 </div>
+
               )}
 
+              {/* FORM */}
               <form
-                onSubmit={handleRegister}
-                className="space-y-5"
+                onSubmit={
+                  handleRegister
+                }
+                className="space-y-6"
               >
 
                 {/* NAME */}
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                />
+                <div>
 
-                {/* EMAIL */}
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                />
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
 
-                {/* PASSWORD */}
-                <div className="relative">
+                    Full Name
 
-                  <input
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                  />
+                  </label>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowPassword(
-                        !showPassword
-                      )
-                    }
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400"
-                  >
-                    {showPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <User
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="John Doe"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
 
                 </div>
 
-                {/* PASSWORD STRENGTH */}
-                <div className="text-sm">
+                {/* EMAIL */}
+                <div>
 
-                  <span className="text-zinc-400">
-                    Password Strength:
-                  </span>
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
 
-                  <span
-                    className={`ml-2 font-semibold ${
-                      passwordStrength ===
-                      "Weak"
-                        ? "text-red-400"
-                        : passwordStrength ===
-                          "Medium"
-                        ? "text-yellow-400"
-                        : "text-green-400"
-                    }`}
-                  >
-                    {passwordStrength}
-                  </span>
+                    Email Address
+
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Mail
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="you@example.com"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
+
+                </div>
+
+                {/* PASSWORD */}
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+
+                    Password
+
+                  </label>
+
+                  <div className="group flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 transition focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Lock
+                      className="text-zinc-500 group-focus-within:text-cyan-400"
+                      size={20}
+                    />
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="password"
+                      placeholder="Create secure password"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          !showPassword
+                        )
+                      }
+                      className="text-zinc-500 transition hover:text-cyan-400"
+                    >
+
+                      {showPassword ? (
+
+                        <EyeOff
+                          size={20}
+                        />
+
+                      ) : (
+
+                        <Eye
+                          size={20}
+                        />
+
+                      )}
+
+                    </button>
+
+                  </div>
+
+                  {/* STRENGTH */}
+                  <div className="mt-4">
+
+                    <div className="mb-2 flex items-center justify-between text-sm">
+
+                      <span className="text-zinc-500">
+
+                        Password Strength
+
+                      </span>
+
+                      <span
+                        className={`font-semibold ${passwordStrength.color}`}
+                      >
+
+                        {
+                          passwordStrength.text
+                        }
+
+                      </span>
+
+                    </div>
+
+                    <div className="h-2 overflow-hidden rounded-full bg-white/10">
+
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500 ${passwordStrength.width}`}
+                      />
+
+                    </div>
+
+                  </div>
 
                 </div>
 
                 {/* CONFIRM PASSWORD */}
-                <div className="relative">
+                <div>
 
-                  <input
-                    type={
-                      showConfirmPassword
-                        ? "text"
-                        : "password"
-                    }
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-black/40 border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all rounded-2xl px-5 py-4 outline-none"
-                  />
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(
-                        !showConfirmPassword
-                      )
-                    }
-                    className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-400"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
+                    Confirm Password
+
+                  </label>
+
+                  <div className="group flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 transition focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Lock
+                      className="text-zinc-500 group-focus-within:text-cyan-400"
+                      size={20}
+                    />
+
+                    <input
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="confirmPassword"
+                      placeholder="Confirm password"
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          !showConfirmPassword
+                        )
+                      }
+                      className="text-zinc-500 transition hover:text-cyan-400"
+                    >
+
+                      {showConfirmPassword ? (
+
+                        <EyeOff
+                          size={20}
+                        />
+
+                      ) : (
+
+                        <Eye
+                          size={20}
+                        />
+
+                      )}
+
+                    </button>
+
+                  </div>
 
                 </div>
 
                 {/* CHECKBOXES */}
-                <div className="flex flex-col gap-4 text-sm text-zinc-400">
+                <div className="space-y-4 text-sm text-zinc-400">
 
                   <label className="flex items-center gap-3">
 
                     <input
                       type="checkbox"
                       name="remember"
-                      onChange={handleChange}
-                      className="accent-cyan-400"
+                      onChange={
+                        handleChange
+                      }
+                      className="h-4 w-4 accent-cyan-400"
                     />
 
-                    Remember me
+                    Remember this device
 
                   </label>
 
@@ -426,12 +777,21 @@ export default function RegisterPage() {
                     <input
                       type="checkbox"
                       name="terms"
-                      onChange={handleChange}
-                      className="accent-cyan-400"
+                      onChange={
+                        handleChange
+                      }
+                      className="h-4 w-4 accent-cyan-400"
                     />
 
-                    I agree to Terms &
-                    Conditions
+                    I agree to the
+                    {" "}
+
+                    <span className="cursor-pointer font-medium text-cyan-400">
+
+                      Terms &
+                      Conditions
+
+                    </span>
 
                   </label>
 
@@ -441,64 +801,109 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-black font-bold text-lg hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] transition-all duration-300"
+                  className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 py-5 text-lg font-black text-black transition hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(34,211,238,0.35)] disabled:opacity-70"
                 >
-                  {loading
-                    ? "Creating Account..."
-                    : "Continue"}
+
+                  {loading ? (
+
+                    <>
+
+                      <Loader2
+                        className="animate-spin"
+                        size={22}
+                      />
+
+                      Creating Account...
+
+                    </>
+
+                  ) : (
+
+                    <>
+
+                      Continue
+
+                      <ArrowRight
+                        className="transition group-hover:translate-x-1"
+                        size={20}
+                      />
+
+                    </>
+
+                  )}
+
                 </button>
 
               </form>
 
               {/* DIVIDER */}
-              <div className="flex items-center gap-4 my-8">
+              <div className="my-8 flex items-center gap-4">
 
-                <div className="flex-1 h-px bg-white/10" />
+                <div className="h-px flex-1 bg-white/10" />
 
-                <span className="text-zinc-500 text-sm">
+                <span className="text-sm text-zinc-500">
+
                   or continue with
+
                 </span>
 
-                <div className="flex-1 h-px bg-white/10" />
+                <div className="h-px flex-1 bg-white/10" />
 
               </div>
 
-              {/* SOCIAL BUTTONS */}
+              {/* SOCIAL */}
               <div className="grid grid-cols-3 gap-4">
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  Google
-                </button>
+                {[
+                  "Google",
+                  "GitHub",
+                  "Apple",
+                ].map(
+                  (
+                    item,
+                    index
+                  ) => (
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  GitHub
-                </button>
+                    <button
+                      key={index}
+                      className="rounded-2xl border border-white/10 bg-white/5 py-4 font-semibold transition hover:bg-white/10"
+                    >
 
-                <button className="bg-white/5 border border-white/10 rounded-2xl py-4 flex items-center justify-center hover:bg-white/10 transition-all font-semibold">
-                  Apple
-                </button>
+                      {item}
+
+                    </button>
+
+                  )
+                )}
 
               </div>
 
               {/* LOGIN */}
-              <p className="text-center text-zinc-400 mt-8">
+              <p className="mt-10 text-center text-zinc-500">
 
-                Already have an account?{" "}
+                Already have an account?
+                {" "}
 
                 <Link
                   href="/login"
-                  className="text-cyan-400 hover:text-cyan-300 font-medium"
+                  className="inline-flex items-center gap-1 font-semibold text-cyan-400 transition hover:text-cyan-300"
                 >
+
                   Login
+
+                  <ChevronRight
+                    size={16}
+                  />
+
                 </Link>
 
               </p>
 
             </div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </section>
 
       </div>
 

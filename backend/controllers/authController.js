@@ -1,12 +1,27 @@
 const User = require("../models/User");
 
-const bcrypt = require("bcryptjs");
-
 const jwt = require("jsonwebtoken");
 
 const generateOTP = require("../utils/generateOTP");
 
 const sendEmail = require("../utils/sendEmail");
+
+
+// =========================
+// GENERATE JWT TOKEN
+// =========================
+const generateToken = (id) => {
+
+  return jwt.sign(
+    { id },
+
+    process.env.JWT_SECRET,
+
+    {
+      expiresIn: "7d",
+    }
+  );
+};
 
 
 // =========================
@@ -19,11 +34,18 @@ const registerUser = async (req, res) => {
     const { name, email, password } =
       req.body;
 
+    // VALIDATION
+    if (!name || !email || !password) {
+
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
     // CHECK EXISTING USER
     const existingUser =
-      await User.findOne({
-        email,
-      });
+      await User.findOne({ email });
 
     if (existingUser) {
 
@@ -31,12 +53,7 @@ const registerUser = async (req, res) => {
         success: false,
         message: "User already exists",
       });
-
     }
-
-    // HASH PASSWORD
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
 
     // GENERATE OTP
     const otp = generateOTP();
@@ -46,10 +63,12 @@ const registerUser = async (req, res) => {
       Date.now() + 5 * 60 * 1000;
 
     // CREATE USER
+    // PASSWORD HASHING HAPPENS
+    // AUTOMATICALLY IN MODEL
     await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       otp,
       otpExpiry,
       isVerified: false,
@@ -76,9 +95,7 @@ const registerUser = async (req, res) => {
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
@@ -91,7 +108,6 @@ const verifyOTP = async (req, res) => {
 
     const { email, otp } = req.body;
 
-    // FIND USER
     const user = await User.findOne({
       email,
     });
@@ -102,7 +118,6 @@ const verifyOTP = async (req, res) => {
         success: false,
         message: "User not found",
       });
-
     }
 
     // CHECK OTP
@@ -112,7 +127,6 @@ const verifyOTP = async (req, res) => {
         success: false,
         message: "Invalid OTP",
       });
-
     }
 
     // CHECK OTP EXPIRY
@@ -122,7 +136,6 @@ const verifyOTP = async (req, res) => {
         success: false,
         message: "OTP expired",
       });
-
     }
 
     // VERIFY USER
@@ -149,9 +162,7 @@ const verifyOTP = async (req, res) => {
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
@@ -165,10 +176,10 @@ const loginUser = async (req, res) => {
     const { email, password } =
       req.body;
 
-    // FIND USER
+    // FIND USER + PASSWORD
     const user = await User.findOne({
       email,
-    });
+    }).select("+password");
 
     if (!user) {
 
@@ -176,7 +187,6 @@ const loginUser = async (req, res) => {
         success: false,
         message: "User not found",
       });
-
     }
 
     // CHECK VERIFIED
@@ -187,14 +197,12 @@ const loginUser = async (req, res) => {
         message:
           "Please verify your email first",
       });
-
     }
 
     // CHECK PASSWORD
     const isMatch =
-      await bcrypt.compare(
-        password,
-        user.password
+      await user.comparePassword(
+        password
       );
 
     if (!isMatch) {
@@ -203,25 +211,22 @@ const loginUser = async (req, res) => {
         success: false,
         message: "Invalid Password",
       });
-
     }
 
-    // JWT TOKEN
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
+    // GENERATE TOKEN
+    const token =
+      generateToken(user._id);
+
+    // REMOVE PASSWORD
+    user.password = undefined;
 
     res.status(200).json({
       success: true,
       message:
         "Login Successful 🚀",
+
       token,
+
       user,
     });
 
@@ -233,9 +238,7 @@ const loginUser = async (req, res) => {
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
@@ -251,7 +254,6 @@ const forgotPassword = async (
 
     const { email } = req.body;
 
-    // FIND USER
     const user = await User.findOne({
       email,
     });
@@ -262,17 +264,17 @@ const forgotPassword = async (
         success: false,
         message: "User not found",
       });
-
     }
 
-    // GENERATE RESET OTP
-    const resetOTP = generateOTP();
+    // GENERATE OTP
+    const resetOTP =
+      generateOTP();
 
-    // OTP EXPIRY
+    // EXPIRY
     const resetOTPExpiry =
       Date.now() + 5 * 60 * 1000;
 
-    // SAVE OTP
+    // SAVE
     user.resetOTP = resetOTP;
 
     user.resetOTPExpiry =
@@ -301,9 +303,7 @@ const forgotPassword = async (
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
@@ -323,10 +323,9 @@ const resetPassword = async (
       newPassword,
     } = req.body;
 
-    // FIND USER
     const user = await User.findOne({
       email,
-    });
+    }).select("+password");
 
     if (!user) {
 
@@ -334,7 +333,6 @@ const resetPassword = async (
         success: false,
         message: "User not found",
       });
-
     }
 
     // CHECK OTP
@@ -344,10 +342,9 @@ const resetPassword = async (
         success: false,
         message: "Invalid OTP",
       });
-
     }
 
-    // CHECK OTP EXPIRY
+    // CHECK EXPIRY
     if (
       user.resetOTPExpiry <
       Date.now()
@@ -357,20 +354,14 @@ const resetPassword = async (
         success: false,
         message: "OTP expired",
       });
-
     }
 
-    // HASH NEW PASSWORD
-    const hashedPassword =
-      await bcrypt.hash(
-        newPassword,
-        10
-      );
-
     // UPDATE PASSWORD
-    user.password = hashedPassword;
+    // HASHING HAPPENS
+    // AUTOMATICALLY IN MODEL
+    user.password = newPassword;
 
-    // CLEAR RESET OTP
+    // CLEAR OTP
     user.resetOTP = null;
 
     user.resetOTPExpiry = null;
@@ -391,9 +382,7 @@ const resetPassword = async (
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
@@ -409,21 +398,6 @@ const updateProfile = async (
 
     const userId = req.userId;
 
-    const {
-      name,
-      bio,
-      experience,
-      education,
-      location,
-      skills,
-      linkedin,
-      github,
-      portfolio,
-      resume,
-      profileImage,
-    } = req.body;
-
-    // FIND USER
     const user =
       await User.findById(userId);
 
@@ -433,48 +407,15 @@ const updateProfile = async (
         success: false,
         message: "User not found",
       });
-
     }
 
-    // UPDATE FIELDS
-    user.name =
-      name || user.name;
+    // UPDATE ONLY PROVIDED FIELDS
+    Object.keys(req.body).forEach(
+      (key) => {
 
-    user.bio =
-      bio || user.bio;
-
-    user.experience =
-      experience ||
-      user.experience;
-
-    user.education =
-      education ||
-      user.education;
-
-    user.location =
-      location ||
-      user.location;
-
-    user.skills =
-      skills || user.skills;
-
-    user.linkedin =
-      linkedin ||
-      user.linkedin;
-
-    user.github =
-      github || user.github;
-
-    user.portfolio =
-      portfolio ||
-      user.portfolio;
-
-    user.resume =
-      resume || user.resume;
-
-    user.profileImage =
-      profileImage ||
-      user.profileImage;
+        user[key] = req.body[key];
+      }
+    );
 
     await user.save();
 
@@ -482,6 +423,7 @@ const updateProfile = async (
       success: true,
       message:
         "Profile updated successfully 🚀",
+
       user,
     });
 
@@ -493,9 +435,7 @@ const updateProfile = async (
       success: false,
       message: "Server Error",
     });
-
   }
-
 };
 
 
