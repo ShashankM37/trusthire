@@ -64,7 +64,7 @@ app.use(
 );
 
 app.use(
-  "/api/applications",
+  "/api/my-applications",
   applicationRoutes
 );
 

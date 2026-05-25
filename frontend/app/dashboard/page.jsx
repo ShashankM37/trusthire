@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
     {
       title: "My Applications",
-      href: "/applications",
+      href: "/my-applications",
       icon: FileText,
     },
 
