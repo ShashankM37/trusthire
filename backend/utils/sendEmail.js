@@ -1,34 +1,33 @@
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-
-  family: 4, // FIXES Render IPv6 issue
-});
-
 const sendEmail = async (to, subject, text) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject,
-    text,
-  };
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
 
-  setImmediate(async () => {
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log("OTP sent successfully");
-    } catch (error) {
-      console.log("Email Error:", error);
-    }
-  });
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+
+      family: 4,
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    console.log("OTP sent successfully");
+  } catch (error) {
+    console.log("FULL EMAIL ERROR:", error);
+  }
 };
 
 module.exports = sendEmail;
