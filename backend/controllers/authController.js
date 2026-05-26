@@ -63,8 +63,6 @@ const registerUser = async (req, res) => {
       Date.now() + 5 * 60 * 1000;
 
     // CREATE USER
-    // PASSWORD HASHING HAPPENS
-    // AUTOMATICALLY IN MODEL
     await User.create({
       name,
       email,
@@ -74,18 +72,19 @@ const registerUser = async (req, res) => {
       isVerified: false,
     });
 
-    // SEND EMAIL
-    await sendEmail(
-      email,
-      "TrustHire Email Verification",
-      `Your OTP is: ${otp}`
-    );
-
+    // SEND RESPONSE INSTANTLY
     res.status(201).json({
       success: true,
       message:
         "OTP sent to your email 🚀",
     });
+
+    // SEND EMAIL IN BACKGROUND
+    sendEmail(
+      email,
+      "TrustHire Email Verification",
+      `Your OTP is: ${otp}`
+    );
 
   } catch (error) {
 
@@ -282,18 +281,19 @@ const forgotPassword = async (
 
     await user.save();
 
-    // SEND EMAIL
-    await sendEmail(
-      email,
-      "TrustHire Password Reset",
-      `Your password reset OTP is: ${resetOTP}`
-    );
-
+    // SEND RESPONSE FIRST
     res.status(200).json({
       success: true,
       message:
         "Password reset OTP sent 🚀",
     });
+
+    // SEND EMAIL IN BACKGROUND
+    sendEmail(
+      email,
+      "TrustHire Password Reset",
+      `Your password reset OTP is: ${resetOTP}`
+    );
 
   } catch (error) {
 
@@ -357,8 +357,6 @@ const resetPassword = async (
     }
 
     // UPDATE PASSWORD
-    // HASHING HAPPENS
-    // AUTOMATICALLY IN MODEL
     user.password = newPassword;
 
     // CLEAR OTP

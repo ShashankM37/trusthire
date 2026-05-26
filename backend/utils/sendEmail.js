@@ -10,18 +10,22 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async (to, subject, text) => {
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to,
-      subject,
-      text,
-    });
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject,
+    text,
+  };
 
-    console.log("Email Sent Successfully");
-  } catch (error) {
-    console.log("Email Error:", error);
-  }
+  // Send email in background
+  setImmediate(async () => {
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("OTP sent successfully");
+    } catch (error) {
+      console.log("Email Error:", error);
+    }
+  });
 };
 
 module.exports = sendEmail;
