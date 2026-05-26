@@ -2,8 +2,9 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, subject, text) => {
   try {
+    // Create transporter
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp-relay.brevo.com",
       port: 587,
       secure: false,
 
@@ -11,22 +12,22 @@ const sendEmail = async (to, subject, text) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-
-      family: 4,
     });
 
+    // Email options
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"TrustHire" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
     };
 
+    // Send email
     await transporter.sendMail(mailOptions);
 
-    console.log("OTP sent successfully");
+    console.log("✅ EMAIL SENT SUCCESSFULLY");
   } catch (error) {
-    console.log("FULL EMAIL ERROR:", error);
+    console.log("❌ FULL EMAIL ERROR:", error);
   }
 };
 
