@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
 
         const response =
           await fetch(
-            "http://localhost:5000/api/auth/forgot-password",
+            "https://trusthire-backend-fbpj.onrender.com/api/auth/forgot-password",
             {
               method: "POST",
 

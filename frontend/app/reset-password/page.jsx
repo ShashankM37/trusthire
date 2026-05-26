@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
 
         const response =
           await fetch(
-            "http://localhost:5000/api/auth/reset-password",
+            "https://trusthire-backend-fbpj.onrender.com:5000/api/auth/reset-password",
             {
               method: "POST",
 

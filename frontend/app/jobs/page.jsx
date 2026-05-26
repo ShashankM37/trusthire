@@ -20,7 +20,7 @@ export default function JobsPage() {
       try {
 
         const response = await fetch(
-          "http://localhost:5000/api/jobs/all"
+          "https://trusthire-backend-fbpj.onrender.com/api/jobs"
         );
 
         const data =

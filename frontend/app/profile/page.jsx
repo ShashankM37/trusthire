@@ -95,7 +95,7 @@ export default function ProfilePage() {
 
       const response =
         await fetch(
-          "http://localhost:5000/api/upload/resume",
+          "https://trusthire-backend-fbpj.onrender.com/api/upload/resume",
           {
             method: "POST",
 

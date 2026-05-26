@@ -30,7 +30,7 @@ export default function SingleJobPage() {
       try {
 
         const response = await fetch(
-          `http://localhost:5000/api/jobs/${params.id}`
+          `https://trusthire-backend-fbpj.onrender.com/api/jobs/${params.id}`
         );
 
         const data =
@@ -86,7 +86,7 @@ export default function SingleJobPage() {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/applications/apply",
+        "https://trusthire-backend-fbpj.onrender.com/api/applications/apply",
         {
           method: "POST",
 

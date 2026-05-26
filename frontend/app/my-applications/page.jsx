@@ -39,7 +39,7 @@ export default function MyApplicationsPage() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:5000/api/applications/my-applications",
+          "https://trusthire-backend-fbpj.onrender.com/api/applications/my-applications",
           {
             headers: {
               Authorization: `Bearer ${token}`,
