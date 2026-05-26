@@ -1,12 +1,16 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+
+  family: 4, // FIXES Render IPv6 issue
 });
 
 const sendEmail = async (to, subject, text) => {
@@ -17,7 +21,6 @@ const sendEmail = async (to, subject, text) => {
     text,
   };
 
-  // Send email in background
   setImmediate(async () => {
     try {
       await transporter.sendMail(mailOptions);
