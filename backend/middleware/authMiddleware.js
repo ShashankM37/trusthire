@@ -32,6 +32,7 @@ const authMiddleware = async (
 
     // SAVE USER ID
     req.userId = decoded.id;
+    req.role = decoded.role;
 
     next();
 

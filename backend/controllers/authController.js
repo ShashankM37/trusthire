@@ -10,10 +10,12 @@ const sendEmail = require("../utils/sendEmail");
 // =========================
 // GENERATE JWT TOKEN
 // =========================
-const generateToken = (id) => {
+const generateToken = (user) => {
 
   return jwt.sign(
-    { id },
+    { id: user._id,
+      role: user.role,
+     },
 
     process.env.JWT_SECRET,
 
@@ -214,7 +216,7 @@ const loginUser = async (req, res) => {
 
     // GENERATE TOKEN
     const token =
-      generateToken(user._id);
+      generateToken(user);
 
     // REMOVE PASSWORD
     user.password = undefined;

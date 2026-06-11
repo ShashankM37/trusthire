@@ -51,6 +51,16 @@ const jobSchema = new mongoose.Schema(
       default: [],
     },
 
+    status: {
+  type: String,
+  enum: [
+    "pending",
+    "approved",
+    "rejected",
+  ],
+  default: "pending",
+},
+
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
