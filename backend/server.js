@@ -52,6 +52,8 @@ app.use(express.json());
 
 app.use(helmet());
 
+app.set("trust proxy", 1);
+
 
 // =========================
 // API ROUTES
