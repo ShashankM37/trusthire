@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   Mail,
@@ -53,7 +54,7 @@ export default function ForgotPasswordPage() {
 
         const response =
           await fetch(
-            "https://trusthire-backend-fbpj.onrender.com/api/auth/forgot-password",
+            apiUrl("/api/auth/forgot-password"),
             {
               method: "POST",
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   Eye,
@@ -28,7 +29,17 @@ export default function ResetPasswordPage() {
   const router = useRouter();
 
   const [email, setEmail] =
-    useState("");
+    useState(() => {
+      if (typeof window === "undefined") {
+        return "";
+      }
+
+      return (
+        localStorage.getItem(
+          "resetEmail"
+        ) || ""
+      );
+    });
 
   const [otp, setOtp] =
     useState("");
@@ -49,26 +60,6 @@ export default function ResetPasswordPage() {
     useState("");
 
   // =========================
-  // LOAD EMAIL
-  // =========================
-  useEffect(() => {
-
-    const storedEmail =
-      localStorage.getItem(
-        "resetEmail"
-      );
-
-    if (storedEmail) {
-
-      setEmail(
-        storedEmail
-      );
-
-    }
-
-  }, []);
-
-  // =========================
   // RESET PASSWORD
   // =========================
   const handleResetPassword =
@@ -86,7 +77,7 @@ export default function ResetPasswordPage() {
 
         const response =
           await fetch(
-            "https://trusthire-backend-fbpj.onrender.com:/api/auth/reset-password",
+            apiUrl("/api/auth/reset-password"),
             {
               method: "POST",
 

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   ArrowUpRight,
@@ -19,7 +20,6 @@ import {
   ShieldCheck,
   Sparkles,
   TrendingUp,
-  XCircle,
   BrainCircuit,
   Eye,
   Target,
@@ -39,7 +39,7 @@ export default function MyApplicationsPage() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "https://trusthire-backend-fbpj.onrender.com/api/applications/my-applications",
+          apiUrl("/api/applications/my-applications"),
           {
             headers: {
               Authorization: `Bearer ${token}`,

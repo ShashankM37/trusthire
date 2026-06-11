@@ -6,9 +6,7 @@ import { useRouter } from "next/navigation";
 
 import {
   Briefcase,
-  LayoutDashboard,
   User,
-  LogOut,
   Bell,
 } from "lucide-react";
 

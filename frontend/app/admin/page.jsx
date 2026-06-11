@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/dashboard")
+    fetch(apiUrl("/api/admin/dashboard"))
       .then((res) => res.json())
       .then((data) => setStats(data));
   }, []);

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { useParams } from "next/navigation";
+import { apiUrl } from "@/lib/api";
 
 export default function SingleJobPage() {
 
@@ -30,7 +31,7 @@ export default function SingleJobPage() {
       try {
 
         const response = await fetch(
-          `https://trusthire-backend-fbpj.onrender.com/api/jobs/${params.id}`
+          apiUrl(`/api/jobs/${params.id}`)
         );
 
         const data =
@@ -86,7 +87,7 @@ export default function SingleJobPage() {
       }
 
       const response = await fetch(
-        "https://trusthire-backend-fbpj.onrender.com/api/applications/apply",
+        apiUrl("/api/applications/apply"),
         {
           method: "POST",
 

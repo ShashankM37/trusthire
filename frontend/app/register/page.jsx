@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   Eye,
@@ -165,7 +166,7 @@ export default function RegisterPage() {
 
         const response =
           await fetch(
-            "https://trusthire-backend-fbpj.onrender.com/api/auth/register",
+            apiUrl("/api/auth/register"),
             {
               method: "POST",
 

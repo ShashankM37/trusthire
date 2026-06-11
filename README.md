@@ -43,7 +43,7 @@ Deploy on Render or Railway
 Create a `.env` file in backend:
 
 ```env
-MONGO_URI=your_mongodb_uri
+MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_secret
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key

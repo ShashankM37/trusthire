@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   UploadCloud,
   FileText,
   CheckCircle2,
-  User,
   Mail,
   Briefcase,
   MapPin,
@@ -17,15 +16,26 @@ import {
   Camera,
   Star,
   TrendingUp,
-  Edit,
 } from "lucide-react";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 export default function ProfilePage() {
 
   const [user, setUser] =
-    useState(null);
+    useState(() => {
+      if (typeof window === "undefined") {
+        return null;
+      }
+
+      const storedUser =
+        localStorage.getItem("user");
+
+      return storedUser
+        ? JSON.parse(storedUser)
+        : null;
+    });
 
   const [resume, setResume] =
     useState(null);
@@ -35,24 +45,6 @@ export default function ProfilePage() {
 
   const [message, setMessage] =
     useState("");
-
-  // =========================
-  // GET USER
-  // =========================
-  useEffect(() => {
-
-    const storedUser =
-      localStorage.getItem("user");
-
-    if (storedUser) {
-
-      setUser(
-        JSON.parse(storedUser)
-      );
-
-    }
-
-  }, []);
 
   // =========================
   // HANDLE FILE CHANGE
@@ -95,7 +87,7 @@ export default function ProfilePage() {
 
       const response =
         await fetch(
-          "https://trusthire-backend-fbpj.onrender.com/api/upload/resume",
+          apiUrl("/api/upload/resume"),
           {
             method: "POST",
 

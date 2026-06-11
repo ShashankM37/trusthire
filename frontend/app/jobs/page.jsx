@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { apiUrl } from "@/lib/api";
 
 export default function JobsPage() {
 
@@ -20,7 +21,7 @@ export default function JobsPage() {
       try {
 
         const response = await fetch(
-          "https://trusthire-backend-fbpj.onrender.com/api/jobs"
+          apiUrl("/api/jobs")
         );
 
         const data =

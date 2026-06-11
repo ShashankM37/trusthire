@@ -5,15 +5,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   Briefcase,
   Building2,
   MapPin,
   DollarSign,
-  FileText,
   Sparkles,
-  CheckCircle2,
   Loader2,
   ArrowRight,
   ShieldCheck,
@@ -86,7 +85,7 @@ export default function CreateJobPage() {
 
         const response =
           await fetch(
-            "https://trusthire-backend-fbpj.onrender.com/api/jobs/create",
+            apiUrl("/api/jobs/create"),
             {
               method: "POST",
 

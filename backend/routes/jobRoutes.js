@@ -29,6 +29,11 @@ router.post(
 // GET ALL JOBS
 // =========================
 router.get(
+  "/",
+  getAllJobs
+);
+
+router.get(
   "/all",
   getAllJobs
 );

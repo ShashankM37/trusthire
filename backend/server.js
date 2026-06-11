@@ -72,6 +72,11 @@ app.use(
 );
 
 app.use(
+  "/api/applications",
+  applicationRoutes
+);
+
+app.use(
   "/api/upload",
   uploadRoutes
 );

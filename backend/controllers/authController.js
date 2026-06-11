@@ -409,13 +409,25 @@ const updateProfile = async (
       });
     }
 
-    // UPDATE ONLY PROVIDED FIELDS
-    Object.keys(req.body).forEach(
-      (key) => {
+    const allowedFields = [
+      "name",
+      "bio",
+      "experience",
+      "education",
+      "location",
+      "skills",
+      "linkedin",
+      "github",
+      "portfolio",
+      "resume",
+      "profileImage",
+    ];
 
-        user[key] = req.body[key];
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        user[field] = req.body[field];
       }
-    );
+    });
 
     await user.save();
 

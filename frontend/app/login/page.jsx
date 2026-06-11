@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
+import { apiUrl } from "@/lib/api";
 
 import {
   Eye,
@@ -19,11 +20,7 @@ import {
   Lock,
   Star,
   Briefcase,
-  Globe,
-  TrendingUp,
   ChevronRight,
-  CheckCircle2,
-  Users,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -43,34 +40,22 @@ export default function LoginPage() {
     useState("");
 
   const [formData, setFormData] =
-    useState({
-      email: "",
-      password: "",
-      remember: false,
-    });
+    useState(() => {
+      const rememberedEmail =
+        typeof window !== "undefined"
+          ? localStorage.getItem(
+              "rememberEmail"
+            )
+          : "";
 
-  // =========================
-  // LOAD REMEMBERED EMAIL
-  // =========================
-  useEffect(() => {
-
-    const rememberedEmail =
-      localStorage.getItem(
-        "rememberEmail"
-      );
-
-    if (rememberedEmail) {
-
-      setFormData((prev) => ({
-        ...prev,
+      return {
         email:
-          rememberedEmail,
-        remember: true,
-      }));
-
-    }
-
-  }, []);
+          rememberedEmail || "",
+        password: "",
+        remember:
+          Boolean(rememberedEmail),
+      };
+    });
 
   // =========================
   // HANDLE INPUT
@@ -112,7 +97,7 @@ export default function LoginPage() {
 
         const response =
           await fetch(
-            "https://trusthire-backend-fbpj.onrender.com/api/auth/login",
+            apiUrl("/api/auth/login"),
             {
               method: "POST",
 

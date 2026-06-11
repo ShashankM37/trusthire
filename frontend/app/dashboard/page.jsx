@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 
 import {
-  LayoutDashboard,
   User,
   FileText,
   Briefcase,
@@ -37,25 +36,32 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const [user, setUser] =
-    useState(null);
+    useState(() => {
+      if (typeof window === "undefined") {
+        return null;
+      }
+
+      const token =
+        localStorage.getItem("token");
+
+      const storedUser =
+        localStorage.getItem("user");
+
+      if (!token || !storedUser) {
+        return null;
+      }
+
+      return JSON.parse(storedUser);
+    });
 
   useEffect(() => {
 
     const token =
       localStorage.getItem("token");
 
-    const storedUser =
-      localStorage.getItem("user");
-
     if (!token) {
 
       router.push("/login");
-
-    } else {
-
-      setUser(
-        JSON.parse(storedUser)
-      );
 
     }
 

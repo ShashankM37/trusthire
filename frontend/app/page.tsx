@@ -437,7 +437,7 @@ export default function HomePage() {
                 </div>
 
                 <p className="leading-relaxed text-zinc-300">
-                  "{item.text}"
+                  &ldquo;{item.text}&rdquo;
                 </p>
 
                 <div className="mt-8">

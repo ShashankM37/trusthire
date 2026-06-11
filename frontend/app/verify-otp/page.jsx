@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
+import { apiUrl } from "@/lib/api";
 
 export default function VerifyOTPPage() {
 
@@ -10,7 +11,16 @@ export default function VerifyOTPPage() {
 
   const [otp, setOtp] = useState("");
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return (
+      localStorage.getItem("verifyEmail") ||
+      ""
+    );
+  });
 
   const [loading, setLoading] =
     useState(false);
@@ -19,17 +29,6 @@ export default function VerifyOTPPage() {
 
   const [success, setSuccess] =
     useState("");
-
-  useEffect(() => {
-
-    const storedEmail =
-      localStorage.getItem("verifyEmail");
-
-    if (storedEmail) {
-      setEmail(storedEmail);
-    }
-
-  }, []);
 
   // VERIFY OTP
   const handleVerifyOTP = async (e) => {
@@ -45,7 +44,7 @@ export default function VerifyOTPPage() {
     try {
 
       const response = await fetch(
-        "https://trusthire-backend-fbpj.onrender.com/api/auth/verify-otp",
+        apiUrl("/api/auth/verify-otp"),
         {
           method: "POST",
 
