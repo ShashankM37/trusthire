@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
+const helmet = require("helmet");
+
 require("dotenv").config();
 
 
@@ -40,12 +42,15 @@ const adminRoutes = require(
 const app = express();
 
 
+
 // =========================
 // MIDDLEWARE
 // =========================
 app.use(cors());
 
 app.use(express.json());
+
+app.use(helmet());
 
 
 // =========================
