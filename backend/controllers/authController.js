@@ -33,24 +33,26 @@ const registerUser = async (req, res) => {
 
   try {
 
-    const { name, email, password } =
+    const { name, email, password, role } =
       req.body;
 
     // VALIDATION
     if (!name || !email || !password) {
-
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
+    const normalizedRole =
+      role === "employee" || role === "recruiter"
+        ? role
+        : "candidate";
+
     // CHECK EXISTING USER
-    const existingUser =
-      await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-
       return res.status(400).json({
         success: false,
         message: "User already exists",
@@ -61,14 +63,14 @@ const registerUser = async (req, res) => {
     const otp = generateOTP();
 
     // OTP EXPIRY
-    const otpExpiry =
-      Date.now() + 5 * 60 * 1000;
+    const otpExpiry = Date.now() + 5 * 60 * 1000;
 
     // CREATE USER
     await User.create({
       name,
       email,
       password,
+      role: normalizedRole,
       otp,
       otpExpiry,
       isVerified: false,

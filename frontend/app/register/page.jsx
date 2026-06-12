@@ -54,6 +54,7 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
+      role: "candidate",
       remember: false,
       terms: false,
     });
@@ -182,6 +183,8 @@ export default function RegisterPage() {
                   formData.email,
                 password:
                   formData.password,
+                role:
+                  formData.role,
               }),
             }
           );
@@ -595,6 +598,54 @@ export default function RegisterPage() {
                       required
                       className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
                     />
+
+                  </div>
+
+                </div>
+
+                {/* ACCOUNT TYPE */}
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+
+                    Account Type
+
+                  </label>
+
+                  <div className="grid grid-cols-2 gap-3">
+
+                    {[
+                      {
+                        value: "candidate",
+                        label: "Candidate",
+                      },
+                      {
+                        value: "employee",
+                        label: "Employee",
+                      },
+                    ].map((option) => (
+
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            role: option.value,
+                          })
+                        }
+                        className={`rounded-2xl border px-5 py-4 font-semibold transition ${
+                          formData.role === option.value
+                            ? "border-cyan-400 bg-cyan-500/10 text-cyan-300"
+                            : "border-white/10 bg-black/30 text-zinc-400 hover:bg-white/5"
+                        }`}
+                      >
+
+                        {option.label}
+
+                      </button>
+
+                    ))}
 
                   </div>
 

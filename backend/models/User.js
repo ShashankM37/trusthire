@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema(
 
       enum: [
         "candidate",
+        "employee",
         "recruiter",
         "admin",
       ],
