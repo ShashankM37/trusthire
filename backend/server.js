@@ -19,6 +19,9 @@ const authRoutes = require(
 const referralRoutes = require(
   "./routes/referralRoutes"
 );
+const referralRequestRoutes = require(
+  "./routes/referralRequestRoutes"
+);
 
 const jobRoutes = require(
   "./routes/jobRoutes"
@@ -52,7 +55,7 @@ app.use(express.json());
 
 app.use(helmet());
 
-app.set("trust proxy", 1);
+
 
 
 // =========================
@@ -66,6 +69,11 @@ app.use(
 app.use(
   "/api/referrals",
   referralRoutes
+);
+
+app.use(
+  "/api/referral-requests",
+  referralRequestRoutes
 );
 
 app.use(

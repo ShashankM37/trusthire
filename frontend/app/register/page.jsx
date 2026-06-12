@@ -20,6 +20,7 @@ import {
   Lock,
   Mail,
   User,
+  Calendar,
   Star,
   Briefcase,
   Globe,
@@ -52,6 +53,7 @@ export default function RegisterPage() {
     useState({
       name: "",
       email: "",
+      dateOfBirth: "",
       password: "",
       confirmPassword: "",
       role: "candidate",
@@ -181,6 +183,8 @@ export default function RegisterPage() {
                   formData.name,
                 email:
                   formData.email,
+                dateOfBirth:
+                  formData.dateOfBirth,
                 password:
                   formData.password,
                 role:
@@ -600,6 +604,41 @@ export default function RegisterPage() {
                     />
 
                   </div>
+
+                </div>
+
+                {/* DATE OF BIRTH */}
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+
+                    Date of Birth
+
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-400/20">
+
+                    <Calendar
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      type="date"
+                      name="dateOfBirth"
+                      value={formData.dateOfBirth}
+                      onChange={
+                        handleChange
+                      }
+                      required
+                      className="w-full bg-transparent px-4 py-5 outline-none text-zinc-300"
+                    />
+
+                  </div>
+
+                  <p className="mt-2 text-sm text-zinc-500">
+                    TrustHire is only available for users who are 18 or older.
+                  </p>
 
                 </div>
 

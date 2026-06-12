@@ -14,6 +14,8 @@ const {
   deleteUser,
   getAllJobs,
   approveJob,
+  getPendingReferrers,
+  updateReferrerVerification,
 } = require(
   "../controllers/adminController"
 );
@@ -38,7 +40,23 @@ router.get(
 
 router.put(
   "/jobs/:id/approve",
+  authMiddleware,
+  adminMiddleware,
   approveJob
+);
+
+router.get(
+  "/referrers/pending",
+  authMiddleware,
+  adminMiddleware,
+  getPendingReferrers
+);
+
+router.put(
+  "/referrers/:id/verification",
+  authMiddleware,
+  adminMiddleware,
+  updateReferrerVerification
 );
 
 // Users

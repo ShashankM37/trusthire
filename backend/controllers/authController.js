@@ -6,6 +6,41 @@ const generateOTP = require("../utils/generateOTP");
 
 const sendEmail = require("../utils/sendEmail");
 
+const isAtLeast18 = (dateOfBirth) => {
+
+  const birthDate =
+    new Date(dateOfBirth);
+
+  if (
+    Number.isNaN(
+      birthDate.getTime()
+    )
+  ) {
+    return false;
+  }
+
+  const today = new Date();
+  let age =
+    today.getFullYear() -
+    birthDate.getFullYear();
+
+  const monthDiff =
+    today.getMonth() -
+    birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (
+      monthDiff === 0 &&
+      today.getDate() <
+        birthDate.getDate()
+    )
+  ) {
+    age -= 1;
+  }
+
+  return age >= 18;
+};
 
 // =========================
 // GENERATE JWT TOKEN
@@ -33,15 +68,36 @@ const registerUser = async (req, res) => {
 
   try {
 
-    const { name, email, password, role } =
+    const {
+      name,
+      email,
+      password,
+      role,
+      dateOfBirth,
+    } =
       req.body;
 
     // VALIDATION
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !dateOfBirth
+    ) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields including date of birth are required",
       });
+    }
+
+    if (!isAtLeast18(dateOfBirth)) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "You must be at least 18 years old to use TrustHire",
+      });
+
     }
 
     const normalizedRole =
@@ -70,7 +126,13 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
+      dateOfBirth,
+      ageVerified: true,
       role: normalizedRole,
+      employeeVerificationStatus:
+        normalizedRole === "employee" || normalizedRole === "recruiter"
+          ? "pending"
+          : "not_required",
       otp,
       otpExpiry,
       isVerified: false,
@@ -417,9 +479,13 @@ const updateProfile = async (
       "experience",
       "education",
       "location",
+      "company",
       "skills",
       "linkedin",
       "github",
+      "leetcode",
+      "codeforces",
+      "hackerrank",
       "portfolio",
       "resume",
       "profileImage",

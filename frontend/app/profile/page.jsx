@@ -16,6 +16,11 @@ import {
   Camera,
   Star,
   TrendingUp,
+  Building2,
+  Linkedin,
+  Github,
+  Code2,
+  Link2,
 } from "lucide-react";
 
 import { motion } from "framer-motion";
@@ -43,8 +48,23 @@ export default function ProfilePage() {
   const [uploading, setUploading] =
     useState(false);
 
+  const [savingProfile, setSavingProfile] =
+    useState(false);
+
   const [message, setMessage] =
     useState("");
+
+  const [profileForm, setProfileForm] =
+    useState(() => ({
+      company: user?.company || "",
+      linkedin: user?.linkedin || "",
+      github: user?.github || "",
+      leetcode: user?.leetcode || "",
+      codeforces: user?.codeforces || "",
+      hackerrank: user?.hackerrank || "",
+      portfolio: user?.portfolio || "",
+      location: user?.location || "",
+    }));
 
   // =========================
   // HANDLE FILE CHANGE
@@ -140,6 +160,91 @@ export default function ProfilePage() {
     } finally {
 
       setUploading(false);
+
+    }
+
+  };
+
+  const saveProfessionalProfile = async () => {
+
+    const token =
+      localStorage.getItem("token");
+
+    try {
+
+      setSavingProfile(true);
+
+      const response =
+        await fetch(
+          apiUrl("/api/auth/update-profile"),
+          {
+            method: "PUT",
+
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                `Bearer ${token}`,
+            },
+
+            body: JSON.stringify({
+              company:
+                profileForm.company,
+              linkedin:
+                profileForm.linkedin,
+              github:
+                profileForm.github,
+              leetcode:
+                profileForm.leetcode,
+              codeforces:
+                profileForm.codeforces,
+              hackerrank:
+                profileForm.hackerrank,
+              portfolio:
+                profileForm.portfolio,
+              location:
+                profileForm.location,
+            }),
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (data.success) {
+
+        const updatedUser = {
+          ...user,
+          ...data.user,
+        };
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(updatedUser)
+        );
+
+        setUser(updatedUser);
+
+        setMessage(
+          "Professional profile updated. Your recruitment links are now saved."
+        );
+
+      } else {
+
+        setMessage(data.message);
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      setMessage(
+        "Profile update failed"
+      );
+
+    } finally {
+
+      setSavingProfile(false);
 
     }
 
@@ -392,7 +497,7 @@ export default function ProfilePage() {
                       </p>
 
                       <h3 className="font-medium">
-                        Bengaluru, India
+                        {user?.location || "Add location"}
                       </h3>
 
                     </div>
@@ -404,11 +509,15 @@ export default function ProfilePage() {
                 {/* SOCIALS */}
                 <div className="mt-8 flex gap-4">
 
-                  <button className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-cyan-400/40 hover:bg-cyan-500/10">
+                  <a
+                    href={user?.linkedin || "#"}
+                    target="_blank"
+                    className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-cyan-400/40 hover:bg-cyan-500/10"
+                  >
 
-                    <Globe size={22} />
+                    <Linkedin size={22} />
 
-                  </button>
+                  </a>
 
                   <button className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-cyan-400/40 hover:bg-cyan-500/10">
 
@@ -612,6 +721,152 @@ export default function ProfilePage() {
                 </a>
 
               )}
+
+            </div>
+
+            {/* REFERRER VERIFICATION */}
+            <div className="rounded-[36px] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl">
+
+              <div className="mb-8 flex items-center justify-between">
+
+                <div>
+
+                  <h2 className="text-3xl font-black">
+                    Referrer Verification
+                  </h2>
+
+                  <p className="mt-3 text-zinc-400">
+                    Add your company and LinkedIn profile so TrustHire can
+                    verify that you are a real employee before showing you as a
+                    trusted referrer.
+                  </p>
+
+                </div>
+
+                <div className="hidden rounded-3xl bg-cyan-500/10 p-5 md:block">
+
+                  <Shield
+                    className="text-cyan-400"
+                    size={42}
+                  />
+
+                </div>
+
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+                    Company
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400">
+
+                    <Building2
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      value={profileForm.company}
+                      onChange={(event) =>
+                        setProfileForm({
+                          ...profileForm,
+                          company:
+                            event.target.value,
+                        })
+                      }
+                      placeholder="Google, Amazon, Microsoft..."
+                      className="w-full bg-transparent px-4 py-4 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
+
+                </div>
+
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+                    Location
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400">
+
+                    <MapPin
+                      className="text-zinc-500"
+                      size={20}
+                    />
+
+                    <input
+                      value={profileForm.location}
+                      onChange={(event) =>
+                        setProfileForm({
+                          ...profileForm,
+                          location:
+                            event.target.value,
+                        })
+                      }
+                      placeholder="Bengaluru, India"
+                      className="w-full bg-transparent px-4 py-4 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="mt-5">
+
+                <label className="mb-3 block text-sm font-medium text-zinc-300">
+                  LinkedIn Profile URL
+                </label>
+
+                <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400">
+
+                  <Linkedin
+                    className="text-zinc-500"
+                    size={20}
+                  />
+
+                  <input
+                    value={profileForm.linkedin}
+                    onChange={(event) =>
+                      setProfileForm({
+                        ...profileForm,
+                        linkedin:
+                          event.target.value,
+                      })
+                    }
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                    className="w-full bg-transparent px-4 py-4 outline-none placeholder:text-zinc-500"
+                  />
+
+                </div>
+
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5 text-sm text-cyan-100">
+                Verification status:
+                {" "}
+                <span className="font-bold capitalize text-cyan-300">
+                  {user?.employeeVerificationStatus || "not_required"}
+                </span>
+              </div>
+
+              <button
+                onClick={saveProfessionalProfile}
+                disabled={savingProfile}
+                className="mt-6 w-full rounded-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 py-5 text-lg font-black text-black transition hover:scale-[1.01] disabled:opacity-50"
+              >
+
+                {savingProfile
+                  ? "Saving Profile..."
+                  : "Save LinkedIn Verification Details"}
+
+              </button>
 
             </div>
 

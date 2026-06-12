@@ -9,7 +9,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const referralPopulate = [
   {
     path: "candidate",
-    select: "name email role skills location",
+    select:
+      "name email role skills location linkedin github leetcode codeforces hackerrank portfolio",
   },
   {
     path: "employee",
@@ -21,9 +22,18 @@ const referralPopulate = [
 router.get("/employees", authMiddleware, async (req, res) => {
   try {
     const employees = await User.find({
-      role: "recruiter",
+      role: {
+        $in: [
+          "employee",
+          "recruiter",
+        ],
+      },
       isVerified: true,
-    }).select("name email role bio skills location");
+      employeeVerificationStatus:
+        "verified",
+    }).select(
+      "name email role bio skills location company linkedin employeeVerificationStatus"
+    );
 
     res.json({
       success: true,

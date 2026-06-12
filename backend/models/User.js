@@ -30,6 +30,16 @@ const userSchema = new mongoose.Schema(
       ],
     },
 
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+
+    ageVerified: {
+      type: Boolean,
+      default: false,
+    },
+
     password: {
       type: String,
       required: [true, "Password is required"],
@@ -77,6 +87,12 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    company: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     skills: [
       {
         type: String,
@@ -92,7 +108,33 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    employeeVerificationStatus: {
+      type: String,
+      enum: [
+        "not_required",
+        "pending",
+        "verified",
+        "rejected",
+      ],
+      default: "not_required",
+    },
+
     github: {
+      type: String,
+      default: "",
+    },
+
+    leetcode: {
+      type: String,
+      default: "",
+    },
+
+    codeforces: {
+      type: String,
+      default: "",
+    },
+
+    hackerrank: {
       type: String,
       default: "",
     },

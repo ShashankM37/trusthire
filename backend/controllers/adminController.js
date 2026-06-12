@@ -138,10 +138,122 @@ const approveJob = async (
 
 };
 
+const getPendingReferrers =
+async (req, res) => {
+
+  try {
+
+    const referrers =
+      await User.find({
+        role: {
+          $in: [
+            "employee",
+            "recruiter",
+          ],
+        },
+        employeeVerificationStatus:
+          "pending",
+      })
+        .select(
+          "name email role company linkedin location employeeVerificationStatus createdAt"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    res.json({
+      success: true,
+      referrers,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};
+
+const updateReferrerVerification =
+async (req, res) => {
+
+  try {
+
+    const { status } = req.body;
+
+    if (
+      ![
+        "verified",
+        "rejected",
+      ].includes(status)
+    ) {
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid verification status",
+      });
+
+    }
+
+    const referrer =
+      await User.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          role: {
+            $in: [
+              "employee",
+              "recruiter",
+            ],
+          },
+        },
+        {
+          employeeVerificationStatus:
+            status,
+        },
+        {
+          new: true,
+        }
+      ).select(
+        "name email role company linkedin location employeeVerificationStatus"
+      );
+
+    if (!referrer) {
+
+      return res.status(404).json({
+        success: false,
+        message: "Referrer not found",
+      });
+
+    }
+
+    res.json({
+      success: true,
+      message:
+        status === "verified"
+          ? "Referrer approved successfully"
+          : "Referrer rejected",
+      referrer,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getAllUsers,
   deleteUser,
   getAllJobs,
   approveJob,
+  getPendingReferrers,
+  updateReferrerVerification,
 };

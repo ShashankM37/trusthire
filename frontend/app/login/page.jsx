@@ -156,10 +156,18 @@ export default function LoginPage() {
 
           }
 
+          const dashboardPath =
+            data.user?.role === "admin"
+              ? "/admin"
+              : data.user?.role === "employee" ||
+                data.user?.role === "recruiter"
+                ? "/dashboard/referrer"
+                : "/dashboard/candidate";
+
           setTimeout(() => {
 
             router.push(
-              "/dashboard"
+              dashboardPath
             );
 
           }, 1800);
