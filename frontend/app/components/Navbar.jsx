@@ -80,6 +80,13 @@ export default function Navbar() {
           </Link>
 
           <Link
+            href="/viva-demo"
+            className="hover:text-cyan-400 transition"
+          >
+            Viva Demo
+          </Link>
+
+          <Link
             href="/my-applications"
             className="hover:text-cyan-400 transition"
           >
