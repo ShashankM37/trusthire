@@ -446,8 +446,8 @@ export default function ReferralsPage() {
               {filteredEmployees.length === 0 && (
                 <div className="rounded-[28px] border border-white/10 bg-white/5 p-8 text-center text-zinc-400 lg:col-span-2">
                   <Users className="mx-auto mb-4 text-cyan-300" size={36} />
-                  No verified employees found. Create and verify an employee
-                  account first for the viva demo.
+                  No verified referrers found yet. Invite employees to join
+                  TrustHire or create a verified referrer account first.
                 </div>
               )}
             </section>

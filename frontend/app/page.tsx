@@ -21,25 +21,25 @@ export default function HomePage() {
   const features = [
     {
       icon: ShieldCheck,
-      title: "Verified Professionals",
-      desc: "Every profile is trust-first. No fake flexing. No spam networking.",
+      title: "Verified Referrers",
+      desc: "Candidates connect with employees who can actually review, respond, and refer.",
     },
     {
       icon: Users,
-      title: "Referral Driven Hiring",
-      desc: "Get opportunities through real people instead of broken job boards.",
+      title: "Structured Requests",
+      desc: "Every ask includes the role, company, context, and candidate intent.",
     },
     {
       icon: TrendingUp,
-      title: "Career Acceleration",
-      desc: "Build meaningful connections that actually move your career forward.",
+      title: "Status Visibility",
+      desc: "Both sides can track whether a request is pending, accepted, in progress, or referred.",
     },
   ];
 
   const stats = [
     {
       value: "12K+",
-      label: "Trusted Users",
+      label: "Candidate Profiles",
     },
     {
       value: "3.2K+",
@@ -47,7 +47,7 @@ export default function HomePage() {
     },
     {
       value: "150+",
-      label: "Hiring Companies",
+      label: "Company Networks",
     },
     {
       value: "98%",
@@ -59,17 +59,17 @@ export default function HomePage() {
     {
       name: "Aarav Sharma",
       role: "Software Engineer",
-      text: "TrustHire helped me land interviews through real referrals instead of blindly applying everywhere.",
+      text: "TrustHire made referrals feel structured. I knew who I asked, what stage it was in, and what happened next.",
     },
     {
       name: "Priya Mehta",
-      role: "Recruiter",
-      text: "Finally a hiring platform that values trust and quality over vanity metrics.",
+      role: "Employee Referrer",
+      text: "The request format helps me quickly understand whether I can confidently refer someone.",
     },
     {
       name: "Rahul Verma",
       role: "Frontend Developer",
-      text: "The UI is insane and the networking feels genuine compared to LinkedIn spam.",
+      text: "It feels built for real referrals, not random messages and ignored applications.",
     },
   ];
 
@@ -102,7 +102,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-xs text-zinc-500">
-                Trust Based Hiring
+                Referral Hiring OS
               </p>
             </div>
           </Link>
@@ -110,31 +110,31 @@ export default function HomePage() {
           {/* LINKS */}
           <div className="hidden items-center gap-10 text-sm text-zinc-300 md:flex">
             <Link
-              href="/features"
+              href="/candidate-account"
               className="transition hover:text-cyan-400"
             >
-              Features
+              Candidates
             </Link>
 
             <Link
-              href="/about"
+              href="/employee-account"
               className="transition hover:text-cyan-400"
             >
-              About
+              Referrers
             </Link>
 
             <Link
-              href="/referrals"
+              href="/status-update"
               className="transition hover:text-cyan-400"
             >
-              Referrals
+              Tracking
             </Link>
 
             <Link
-              href="/pricing"
+              href="/send-referral-request"
               className="transition hover:text-cyan-400"
             >
-              Pricing
+              Request
             </Link>
           </div>
 
@@ -178,26 +178,27 @@ export default function HomePage() {
             <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-5 py-2 text-sm text-cyan-300">
               <Sparkles size={16} />
 
-              Next Generation Hiring Platform
+              Referral infrastructure for early talent
             </div>
 
             {/* TITLE */}
             <h1 className="text-5xl font-black leading-[1.1] md:text-7xl">
-              Hiring Built
+              Referrals Built
               <br />
 
               <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                On Trust
+              With Proof
               </span>
 
               <br />
-              Not Noise.
+              Not Spam.
             </h1>
 
             {/* DESC */}
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-zinc-400 md:text-xl">
-              TrustHire connects professionals through verified referrals,
-              trusted communities, and meaningful career relationships.
+              TrustHire is a referral operating system where candidates request
+              referrals from verified employees, referrers manage requests, and
+              every status stays visible from first ask to final outcome.
             </p>
 
             {/* CTA */}
@@ -206,16 +207,16 @@ export default function HomePage() {
                 href="/register"
                 className="flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 px-8 py-4 font-semibold text-black shadow-2xl shadow-cyan-500/20 transition hover:scale-105"
               >
-                Start Building Network
+                Start Referral Flow
 
                 <ArrowRight size={18} />
               </Link>
 
               <Link
-                href="/about"
+                href="/candidate-account"
                 className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-center backdrop-blur-xl transition hover:bg-white/10"
               >
-                Learn More
+                Explore Product
               </Link>
             </div>
 
@@ -224,19 +225,19 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="text-cyan-400" size={18} />
 
-                Verified Profiles
+                Verified Referrers
               </div>
 
               <div className="flex items-center gap-2">
                 <Lock className="text-cyan-400" size={18} />
 
-                Secure Authentication
+                Structured Requests
               </div>
 
               <div className="flex items-center gap-2">
                 <Globe className="text-cyan-400" size={18} />
 
-                Global Opportunities
+                Live Status Tracking
               </div>
             </div>
           </motion.div>
@@ -280,10 +281,10 @@ export default function HomePage() {
 
               <div className="mt-8 space-y-5">
                 {[
-                  "Verified Recruiters",
-                  "Referral Matching",
-                  "Real Professional Network",
-                  "AI Smart Recommendations",
+                    "Candidate Profiles",
+                    "Employee Request Inbox",
+                    "Referral Status Pipeline",
+                    "Trust-Based Hiring Signals",
                 ].map((item, i) => (
                   <div
                     key={i}
@@ -309,7 +310,7 @@ export default function HomePage() {
               <div className="mt-8 rounded-3xl bg-gradient-to-r from-cyan-400 to-blue-600 p-[1px]">
                 <div className="rounded-3xl bg-black p-6">
                   <p className="text-sm text-zinc-400">
-                    Weekly Referral Growth
+                    Referral Pipeline Growth
                   </p>
 
                   <h3 className="mt-2 text-4xl font-black">
@@ -317,7 +318,7 @@ export default function HomePage() {
                   </h3>
 
                   <p className="mt-2 text-sm text-zinc-500">
-                    Fastest growing trust-based hiring platform
+                    Built for campuses, candidates, and employee-led hiring
                   </p>
                 </div>
               </div>
@@ -358,12 +359,12 @@ export default function HomePage() {
             </p>
 
             <h2 className="mt-5 text-5xl font-black">
-              Built For Modern Professionals
+              Built For The Referral Loop
             </h2>
 
             <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-              Stop wasting time on low quality networking.
-              Build trusted career connections that matter.
+              Turn cold applications into structured referral conversations
+              with accountability on both sides.
             </p>
           </div>
 
@@ -393,10 +394,10 @@ export default function HomePage() {
                 </p>
 
                 <Link
-                  href="/features"
+                  href="/candidate-account"
                   className="mt-8 inline-flex items-center gap-2 text-cyan-400 transition hover:gap-4"
                 >
-                  Explore Feature
+                  Explore Workflow
 
                   <ArrowRight size={18} />
                 </Link>
@@ -411,11 +412,11 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h2 className="text-5xl font-black">
-              Loved By Professionals
+              Built Around Trust
             </h2>
 
             <p className="mt-6 text-zinc-400">
-              Real feedback from real users.
+              A cleaner referral journey for candidates and referrers.
             </p>
           </div>
 
@@ -459,14 +460,14 @@ export default function HomePage() {
       <section className="px-6 pb-28 pt-10">
         <div className="mx-auto max-w-6xl rounded-[40px] border border-white/10 bg-gradient-to-r from-cyan-500/10 to-blue-600/10 p-12 text-center backdrop-blur-2xl md:p-20">
           <h2 className="text-5xl font-black leading-tight md:text-6xl">
-            Ready To Build
+            Ready To Run
             <br />
-            Your Trust Network?
+            Referral-First Hiring?
           </h2>
 
           <p className="mx-auto mt-8 max-w-2xl text-lg text-zinc-400">
-            Join the next generation hiring platform where trust,
-            referrals, and real opportunities matter.
+            Start with candidates, referrers, referral requests, and status
+            tracking. Add recruiters and college teams as the network grows.
           </p>
 
           <div className="mt-12 flex flex-col items-center justify-center gap-5 sm:flex-row">
@@ -474,14 +475,14 @@ export default function HomePage() {
               href="/register"
               className="rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 px-8 py-4 font-semibold text-black transition hover:scale-105"
             >
-              Create Free Account
+              Create Account
             </Link>
 
             <Link
-              href="/about"
+              href="/employee-account"
               className="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 transition hover:bg-white/10"
             >
-              Learn More
+              For Referrers
             </Link>
           </div>
         </div>

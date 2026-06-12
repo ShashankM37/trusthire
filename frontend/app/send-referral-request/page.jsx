@@ -141,7 +141,7 @@ export default function SendReferralRequestPage() {
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
                 <Send size={16} />
-                Viva Screen 3
+                Referral requests
               </div>
 
               <h1 className="text-4xl font-black md:text-6xl">
@@ -149,8 +149,8 @@ export default function SendReferralRequestPage() {
               </h1>
 
               <p className="mt-4 max-w-3xl text-zinc-400">
-                Login as candidate, select an employee, enter company and role,
-                then submit the referral request.
+                Find a verified referrer, explain the target role, and send a
+                focused referral request with enough context to earn a response.
               </p>
             </div>
 

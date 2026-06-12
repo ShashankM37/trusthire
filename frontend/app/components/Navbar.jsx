@@ -80,10 +80,17 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/viva-demo"
+            href="/candidate-account"
             className="hover:text-cyan-400 transition"
           >
-            Viva Demo
+            Candidates
+          </Link>
+
+          <Link
+            href="/employee-account"
+            className="hover:text-cyan-400 transition"
+          >
+            Referrers
           </Link>
 
           <Link

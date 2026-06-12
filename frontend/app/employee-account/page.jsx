@@ -21,7 +21,7 @@ export default function EmployeeAccountPage() {
         <section className="mx-auto max-w-6xl">
           <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
             <BriefcaseBusiness size={16} />
-            Viva Screen 2
+            For referrers
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
@@ -31,9 +31,9 @@ export default function EmployeeAccountPage() {
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-zinc-400">
-                This page demonstrates the employee side of TrustHire. Employees
-                receive candidate referral requests, accept or reject them, and
-                update the referral status.
+                Employees become trusted referrers. They review candidate
+                requests, choose who to support, and keep the referral journey
+                transparent.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -41,7 +41,7 @@ export default function EmployeeAccountPage() {
                   href="/register"
                   className="inline-flex items-center gap-2 rounded-2xl bg-cyan-400 px-6 py-4 font-bold text-black"
                 >
-                  Create Employee
+                  Join as Referrer
                   <ArrowRight size={18} />
                 </Link>
 
@@ -49,7 +49,7 @@ export default function EmployeeAccountPage() {
                   href="/accept-request"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-6 py-4 font-semibold"
                 >
-                  View Requests
+                  Review Requests
                   <Inbox size={18} />
                 </Link>
               </div>
@@ -60,15 +60,15 @@ export default function EmployeeAccountPage() {
                 <ShieldCheck className="text-cyan-300" size={30} />
               </div>
 
-              <h2 className="text-2xl font-black">Employee Features</h2>
+              <h2 className="text-2xl font-black">Referrer Workflow</h2>
 
               <div className="mt-6 space-y-4">
                 {[
-                  "Register with Employee account type",
-                  "Receive referral requests from candidates",
-                  "Accept or reject pending requests",
-                  "Update status to In Progress or Referred",
-                  "Keep candidate informed through status tracking",
+                  "Create a verified referrer profile",
+                  "Receive structured candidate requests",
+                  "Accept candidates you can confidently support",
+                  "Move requests through live status stages",
+                  "Build reputation through responsible referrals",
                 ].map((item) => (
                   <div
                     key={item}

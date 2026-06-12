@@ -123,7 +123,7 @@ export default function StatusUpdatePage() {
           <div className="mb-8">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
               <Activity size={16} />
-              Viva Screen 5
+              Live tracking
             </div>
 
             <h1 className="text-4xl font-black md:text-6xl">
@@ -131,8 +131,8 @@ export default function StatusUpdatePage() {
             </h1>
 
             <p className="mt-4 max-w-3xl text-zinc-400">
-              Employees can update a request status. Candidates can login and
-              see the updated status for their own referral requests.
+              Candidates and referrers share one source of truth for every
+              referral request, from pending review to referred or rejected.
             </p>
           </div>
 

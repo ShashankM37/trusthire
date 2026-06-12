@@ -21,7 +21,7 @@ export default function CandidateAccountPage() {
         <section className="mx-auto max-w-6xl">
           <div className="mb-10 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-sm text-cyan-300">
             <User size={16} />
-            Viva Screen 1
+            For candidates
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -31,9 +31,9 @@ export default function CandidateAccountPage() {
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-zinc-400">
-                This page is used to demonstrate that a candidate can create an
-                account, login, maintain a profile, and request referrals from
-                employees.
+                Build a trusted profile, request referrals from verified
+                employees, and track every opportunity from first ask to final
+                outcome.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
@@ -41,7 +41,7 @@ export default function CandidateAccountPage() {
                   href="/register"
                   className="inline-flex items-center gap-2 rounded-2xl bg-cyan-400 px-6 py-4 font-bold text-black"
                 >
-                  Create Candidate
+                  Join as Candidate
                   <ArrowRight size={18} />
                 </Link>
 
@@ -49,7 +49,7 @@ export default function CandidateAccountPage() {
                   href="/send-referral-request"
                   className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-6 py-4 font-semibold"
                 >
-                  Send Referral Request
+                  Request a Referral
                 </Link>
               </div>
             </div>
@@ -59,15 +59,15 @@ export default function CandidateAccountPage() {
                 <ShieldCheck className="text-cyan-300" size={30} />
               </div>
 
-              <h2 className="text-2xl font-black">Candidate Features</h2>
+              <h2 className="text-2xl font-black">Candidate Workflow</h2>
 
               <div className="mt-6 space-y-4">
                 {[
-                  "Register with Candidate account type",
-                  "Login securely using JWT authentication",
-                  "View profile and dashboard",
-                  "Send referral request to an employee",
-                  "Track referral request status",
+                  "Create a verified candidate identity",
+                  "Build a referral-ready profile",
+                  "Discover employees open to referrals",
+                  "Send focused referral requests",
+                  "Track status without follow-up chaos",
                 ].map((item) => (
                   <div
                     key={item}
@@ -84,12 +84,13 @@ export default function CandidateAccountPage() {
           <div className="mt-8 rounded-[28px] border border-white/10 bg-white/5 p-7">
             <div className="mb-4 flex items-center gap-3">
               <FileText className="text-cyan-300" size={22} />
-              <h2 className="text-2xl font-black">Viva Explanation</h2>
+              <h2 className="text-2xl font-black">Why It Matters</h2>
             </div>
 
             <p className="text-zinc-400">
-              In the viva, open this page first and explain that the candidate is
-              the job seeker who sends referral requests to verified employees.
+              Most students apply into silence. TrustHire gives candidates a
+              clear path to trusted introductions, better context, and visible
+              progress.
             </p>
           </div>
         </section>
