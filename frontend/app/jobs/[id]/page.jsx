@@ -22,7 +22,7 @@ export default function SingleJobPage() {
     useState("");
 
   // =========================
-  // FETCH SINGLE JOB
+  // FETCH SINGLE OPPORTUNITY
   // =========================
   useEffect(() => {
 
@@ -30,16 +30,13 @@ export default function SingleJobPage() {
 
       try {
 
-        const response = await fetch(
-          apiUrl(`/api/jobs/${params.id}`)
-        );
+        const response = await fetch(apiUrl(`/api/opportunities/${params.id}`));
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
         if (data.success) {
 
-          setJob(data.job);
+          setJob(data.opportunity);
 
         }
 
@@ -64,9 +61,9 @@ export default function SingleJobPage() {
 
 
   // =========================
-  // APPLY TO JOB
+  // SEND REFERRAL REQUEST
   // =========================
-  const handleApply = async () => {
+  const handleRequestReferral = async () => {
 
     try {
 
@@ -74,41 +71,43 @@ export default function SingleJobPage() {
 
       setMessage("");
 
-      const token =
-        localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
       if (!token) {
 
-        setMessage(
-          "Please login first"
-        );
+        setMessage("Please login first");
 
         return;
       }
 
-      const response = await fetch(
-        apiUrl("/api/applications/apply"),
-        {
-          method: "POST",
+      // Ensure candidate has uploaded a resume
+      const storedUser = localStorage.getItem("user");
+      const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-          headers: {
-            "Content-Type":
-              "application/json",
+      const hasResume = parsedUser && ((parsedUser.resume && (parsedUser.resume.url || typeof parsedUser.resume === "string")) || parsedUser.resume);
 
-            Authorization:
-              `Bearer ${token}`,
-          },
+      if (!hasResume) {
+        setMessage("Please upload your resume in your profile before requesting a referral.");
+        setApplying(false);
+        return;
+      }
 
-          body: JSON.stringify({
-            jobId: params.id,
-          }),
-        }
-      );
+      const response = await fetch(apiUrl("/api/referral-requests"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          receiverId: job.createdBy?._id,
+          opportunityId: job._id,
+          message: `Requesting referral for opportunity ${job._id} - ${job.title}`,
+        }),
+      });
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
-      setMessage(data.message);
+      setMessage(data.message || (data.success ? "Request sent" : "Request failed"));
 
     } catch (error) {
 
@@ -167,27 +166,17 @@ export default function SingleJobPage() {
         {/* HEADER */}
         <div className="mb-10">
 
-          <div className="inline-block px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm mb-5">
-            {job.jobType}
-          </div>
+          <h1 className="text-5xl md:text-6xl font-bold leading-tight">{job.title}</h1>
 
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-            {job.title}
-          </h1>
-
-          <p className="text-2xl text-cyan-400 mt-4">
-            {job.company}
-          </p>
+          <p className="text-2xl text-cyan-400 mt-4">{job.company}</p>
 
           <div className="flex flex-wrap gap-6 mt-6 text-zinc-400">
 
-            <span>
-              📍 {job.location}
-            </span>
+            <span>📍 {job.location}</span>
 
-            <span>
-              💰 {job.salary || "Not disclosed"}
-            </span>
+            <span>🪪 Experience: {job.experienceRequirement || "Not specified"}</span>
+
+            <span>🎯 Slots: {job.referralSlots ?? 1}</span>
 
           </div>
 
@@ -201,9 +190,7 @@ export default function SingleJobPage() {
             Job Description
           </h2>
 
-          <p className="text-zinc-300 leading-relaxed whitespace-pre-line">
-            {job.description}
-          </p>
+          <p className="text-zinc-300 leading-relaxed whitespace-pre-line">{job.description}</p>
 
         </div>
 
@@ -215,22 +202,7 @@ export default function SingleJobPage() {
             Requirements
           </h2>
 
-          <div className="flex flex-wrap gap-4">
-
-            {job.requirements?.map(
-              (req, index) => (
-
-                <div
-                  key={index}
-                  className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10"
-                >
-                  {req}
-                </div>
-
-              )
-            )}
-
-          </div>
+          <div className="flex flex-wrap gap-4">{job.requiredSkills?.map((s, index) => (<div key={index} className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10">{s}</div>))}</div>
 
         </div>
 
@@ -269,19 +241,15 @@ export default function SingleJobPage() {
             Recruiter
           </h2>
 
-          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5">
 
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600" />
 
             <div>
 
-              <h3 className="text-2xl font-semibold">
-                {job.postedBy?.name}
-              </h3>
+              <h3 className="text-2xl font-semibold">{job.createdBy?.name}</h3>
 
-              <p className="text-zinc-400">
-                {job.postedBy?.email}
-              </p>
+              <p className="text-zinc-400">{job.createdBy?.email}</p>
 
             </div>
 
@@ -301,14 +269,8 @@ export default function SingleJobPage() {
 
 
         {/* APPLY BUTTON */}
-        <button
-          onClick={handleApply}
-          disabled={applying}
-          className="w-full py-5 rounded-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-black text-xl font-bold hover:scale-[1.01] transition-all duration-300 disabled:opacity-50"
-        >
-          {applying
-            ? "Applying..."
-            : "Apply Now 🚀"}
+        <button onClick={handleRequestReferral} disabled={applying} className="w-full py-5 rounded-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-black text-xl font-bold hover:scale-[1.01] transition-all duration-300 disabled:opacity-50">
+          {applying ? "Sending..." : "Request Referral 🚀"}
         </button>
 
       </div>

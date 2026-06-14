@@ -75,72 +75,14 @@ router.get("/mine", authMiddleware, async (req, res) => {
   }
 });
 
-// SEND REFERRAL REQUEST
-router.post("/", authMiddleware, async (req, res) => {
-  try {
-    const { employeeId, company, role, message } = req.body;
-
-    if (!employeeId || !company || !role) {
-      return res.status(400).json({
-        success: false,
-        message: "Employee, company, and role are required",
-      });
-    }
-
-    const employee = await User.findById(employeeId);
-
-    if (
-      !employee ||
-      !["employee", "recruiter"].includes(employee.role)
-    ) {
-      return res.status(404).json({
-        success: false,
-        message: "Employee not found",
-      });
-    }
-
-    const existingReferral = await Referral.findOne({
-      candidate: req.userId,
-      employee: employeeId,
-      company,
-      role,
-      status: {
-        $in: ["Pending", "Accepted", "In Progress"],
-      },
-    });
-
-    if (existingReferral) {
-      return res.status(400).json({
-        success: false,
-        message: "Referral request already exists",
-      });
-    }
-
-    const referral = await Referral.create({
-      candidate: req.userId,
-      employee: employeeId,
-      company,
-      role,
-      message,
-    });
-
-    const populatedReferral = await Referral.findById(referral._id).populate(
-      referralPopulate
-    );
-
-    res.status(201).json({
-      success: true,
-      message: "Referral request sent",
-      referral: populatedReferral,
-    });
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
+// Candidate-facing direct referral creation is deprecated.
+// Use POST /api/referral-requests to request a referral tied to an Opportunity.
+router.post("/", authMiddleware, (req, res) => {
+  return res.status(410).json({
+    success: false,
+    message:
+      "Deprecated: candidate creation via /api/referrals is disabled. Use /api/referral-requests to request a referral linked to an opportunity.",
+  });
 });
 
 // ACCEPT, REJECT, OR UPDATE REFERRAL STATUS
@@ -153,6 +95,10 @@ router.patch("/:id/status", authMiddleware, async (req, res) => {
       "Rejected",
       "In Progress",
       "Referred",
+      "Interview Received",
+      "Interview Completed",
+      "Offer Received",
+      "Hired",
     ];
 
     if (!allowedStatuses.includes(status)) {
@@ -175,6 +121,28 @@ router.patch("/:id/status", authMiddleware, async (req, res) => {
       return res.status(403).json({
         success: false,
         message: "Only the employee can update this referral",
+      });
+    }
+
+    // Enforce forward-only state transitions
+    const statusOrder = {
+      Pending: 0,
+      Accepted: 1,
+      "In Progress": 2,
+      Referred: 3,
+      "Interview Received": 4,
+      "Interview Completed": 5,
+      "Offer Received": 6,
+      Hired: 7,
+    };
+
+    const currentIndex = statusOrder[referral.status];
+    const newIndex = statusOrder[status];
+
+    if (newIndex < currentIndex) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot revert referral status to a previous stage",
       });
     }
 

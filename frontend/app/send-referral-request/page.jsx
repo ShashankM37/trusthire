@@ -12,6 +12,7 @@ export default function SendReferralRequestPage() {
   const router = useRouter();
 
   const [employees, setEmployees] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
   const [forms, setForms] = useState({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,14 @@ export default function SendReferralRequestPage() {
 
         if (active) {
           setEmployees(data.employees);
+          // load public opportunities so candidate can tie requests to an opportunity
+          try {
+            const oppRes = await fetch(apiUrl("/api/opportunities"));
+            const oppData = await oppRes.json();
+            if (oppData?.success) setOpportunities(oppData.opportunities || []);
+          } catch (err) {
+            console.log("load opportunities error", err);
+          }
         }
       } catch (err) {
         if (active) {
@@ -82,8 +91,7 @@ export default function SendReferralRequestPage() {
     setForms((current) => ({
       ...current,
       [employeeId]: {
-        company: "",
-        role: "",
+        opportunityId: "",
         message: "",
         ...current[employeeId],
         [field]: value,
@@ -99,13 +107,16 @@ export default function SendReferralRequestPage() {
     setMessage("");
 
     try {
-      const response = await fetch(apiUrl("/api/referrals"), {
+      if (!form.opportunityId) {
+        throw new Error("Please select an opportunity to request a referral for");
+      }
+
+      const response = await fetch(apiUrl("/api/referral-requests"), {
         method: "POST",
         headers: authHeaders(),
         body: JSON.stringify({
-          employeeId,
-          company: form.company,
-          role: form.role,
+          receiverId: employeeId,
+          opportunityId: form.opportunityId,
           message: form.message,
         }),
       });
@@ -119,8 +130,7 @@ export default function SendReferralRequestPage() {
       setForms((current) => ({
         ...current,
         [employeeId]: {
-          company: "",
-          role: "",
+          opportunityId: "",
           message: "",
         },
       }));
@@ -207,22 +217,23 @@ export default function SendReferralRequestPage() {
                     </div>
 
                     <div className="grid gap-3 md:grid-cols-2">
-                      <input
-                        value={form.company || ""}
+                      <select
+                        value={form.opportunityId || ""}
                         onChange={(event) =>
-                          updateForm(employee._id, "company", event.target.value)
+                          updateForm(employee._id, "opportunityId", event.target.value)
                         }
-                        placeholder="Company"
                         className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-cyan-400"
-                      />
-                      <input
-                        value={form.role || ""}
-                        onChange={(event) =>
-                          updateForm(employee._id, "role", event.target.value)
-                        }
-                        placeholder="Job role"
-                        className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none focus:border-cyan-400"
-                      />
+                      >
+                        <option value="">Select opportunity</option>
+                        {opportunities.map((opp) => (
+                          <option key={opp._id} value={opp._id}>
+                            {opp.company} - {opp.title}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="text-sm text-zinc-400 px-4 py-3">
+                        Select the role/opportunity you want the referrer to refer you for.
+                      </div>
                     </div>
 
                     <textarea

@@ -12,14 +12,19 @@ const referralRequestSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    opportunity: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Opportunity",
+      required: true,
+    },
     message: {
       type: String,
       default: "",
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected"],
-      default: "pending",
+      enum: ["Pending", "Accepted", "Rejected"],
+      default: "Pending",
     },
   },
   {

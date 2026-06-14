@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
-import { apiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 import {
   Briefcase,
@@ -47,6 +47,7 @@ export default function CreateJobPage() {
       description: "",
       requirements: "",
       skills: "",
+      referralSlots: 1,
     });
 
   // =========================
@@ -83,56 +84,35 @@ export default function CreateJobPage() {
             "token"
           );
 
-        const response =
-          await fetch(
-            apiUrl("/api/jobs/create"),
-            {
-              method: "POST",
+        const data = await apiFetch("/api/opportunities", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: formData.title,
+            company: formData.company,
+            jobLink: formData.jobLink || "",
+            location: formData.location,
+            requiredSkills: formData.skills
+              ? formData.skills.split(",").map((s) => s.trim())
+              : [],
+            experienceRequirement: formData.experience || "",
+            referralSlots: Number(formData.referralSlots) || 1,
+            description: formData.description,
+          }),
+        });
 
-              headers: {
-                "Content-Type":
-                  "application/json",
+        if (data?.success) {
 
-                Authorization:
-                  `Bearer ${token}`,
-              },
-
-              body: JSON.stringify({
-                ...formData,
-
-                requirements:
-                  formData.requirements
-                    .split(",")
-                    .map((req) =>
-                      req.trim()
-                    ),
-
-                skills:
-                  formData.skills
-                    .split(",")
-                    .map((skill) =>
-                      skill.trim()
-                    ),
-              }),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (data.success) {
-
-          setSuccess(
-            "Job posted successfully 🚀"
-          );
+          setSuccess("Opportunity published successfully 🚀");
 
           setTimeout(() => {
 
-            router.push(
-              "/jobs"
-            );
+            router.push("/jobs");
 
-          }, 1800);
+          }, 1200);
 
         } else {
 
@@ -147,7 +127,7 @@ export default function CreateJobPage() {
         console.log(error);
 
         setError(
-          "Something went wrong"
+          error?.message || "Something went wrong"
         );
 
       } finally {
@@ -373,17 +353,9 @@ export default function CreateJobPage() {
 
                 <div>
 
-                  <h2 className="text-3xl font-black">
+                  <h2 className="text-3xl font-black">Create Opportunity</h2>
 
-                    Create Job
-
-                  </h2>
-
-                  <p className="mt-2 text-zinc-400">
-
-                    Publish a premium opportunity
-
-                  </p>
+                  <p className="mt-2 text-zinc-400">Publish a referral opportunity</p>
 
                 </div>
 
@@ -673,6 +645,30 @@ export default function CreateJobPage() {
                       onChange={
                         handleChange
                       }
+                      className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
+                    />
+
+                  </div>
+
+                </div>
+
+                {/* REFERRAL SLOTS */}
+                <div>
+
+                  <label className="mb-3 block text-sm font-medium text-zinc-300">
+
+                    Referral Slots
+
+                  </label>
+
+                  <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5">
+
+                    <input
+                      type="number"
+                      name="referralSlots"
+                      min={0}
+                      value={formData.referralSlots}
+                      onChange={handleChange}
                       className="w-full bg-transparent px-4 py-5 outline-none placeholder:text-zinc-500"
                     />
 

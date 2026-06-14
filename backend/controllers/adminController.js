@@ -1,6 +1,9 @@
 const User = require("../models/User");
 const Job = require("../models/Job");
 const Application = require("../models/Application");
+const Opportunity = require("../models/Opportunity");
+const ReferralRequest = require("../models/ReferralRequest");
+const Referral = require("../models/Referral");
 
 // Dashboard Stats
 const getDashboardStats =
@@ -17,11 +20,40 @@ async (req, res) => {
     const totalApplications =
       await Application.countDocuments();
 
+    const totalOpportunities = await Opportunity.countDocuments();
+
+    const totalReferralRequests = await ReferralRequest.countDocuments();
+
+    const totalReferrals = await Referral.countDocuments();
+
+    const interviews = await Referral.countDocuments({
+      status: { $in: ["Interview Received", "Interview Completed"] },
+    });
+
+    const offers = await Referral.countDocuments({ status: "Offer Received" });
+
+    const hires = await Referral.countDocuments({ status: "Hired" });
+
+    const verifiedEmployees = await User.countDocuments({
+      role: { $in: ["employee", "recruiter"] },
+      employeeVerificationStatus: "verified",
+    });
+
+    const candidates = await User.countDocuments({ role: "candidate" });
+
     res.json({
       success: true,
       totalUsers,
       totalJobs,
       totalApplications,
+      totalOpportunities,
+      totalReferralRequests,
+      totalReferrals,
+      interviews,
+      offers,
+      hires,
+      verifiedEmployees,
+      candidates,
     });
 
   } catch (error) {

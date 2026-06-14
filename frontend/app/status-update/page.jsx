@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "../components/Navbar";
+import ReferralTimeline from "../components/ReferralTimeline";
 import { apiUrl } from "@/lib/api";
 
 import { Activity, CheckCircle2, Loader2 } from "lucide-react";
@@ -178,6 +179,13 @@ export default function StatusUpdatePage() {
                           ? `Candidate: ${request.candidate?.name || "Unknown"}`
                           : `Employee: ${request.employee?.name || "Unknown"}`}
                       </p>
+                      <div className="mt-5">
+                        <ReferralTimeline
+                          status={request.status}
+                          createdAt={request.createdAt}
+                          updatedAt={request.updatedAt}
+                        />
+                      </div>
                     </div>
 
                     {canUpdate && (

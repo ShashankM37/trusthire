@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import Navbar from "../../components/Navbar";
+import ReferralTimeline from "../../components/ReferralTimeline";
 import { apiUrl } from "@/lib/api";
 
 import {
@@ -41,6 +42,7 @@ export default function CandidateDashboardPage() {
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [referrals, setReferrals] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -83,6 +85,14 @@ export default function CandidateDashboardPage() {
         if (active && data.success) {
           setReferrals(data.referrals);
         }
+        // load available opportunities
+        try {
+          const oppRes = await fetch(apiUrl("/api/opportunities"));
+          const oppData = await oppRes.json();
+          if (active && oppData.success) setOpportunities(oppData.opportunities || []);
+        } catch (err) {
+          console.log("load opportunities error", err);
+        }
       } finally {
         if (active) {
           setLoading(false);
@@ -99,6 +109,7 @@ export default function CandidateDashboardPage() {
 
   const counts = useMemo(() => {
     return {
+      availableOpportunities: opportunities.length,
       total: referrals.length,
       pending: referrals.filter(
         (item) => item.status === "Pending"
@@ -112,7 +123,7 @@ export default function CandidateDashboardPage() {
         (item) => item.status === "Referred"
       ).length,
     };
-  }, [referrals]);
+  }, [referrals, opportunities]);
 
   return (
     <>
@@ -146,42 +157,20 @@ export default function CandidateDashboardPage() {
             </Link>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 md:grid-cols-3 xl:grid-cols-4">
             {[
-              {
-                label: "Total Requests",
-                value: counts.total,
-                icon: FileText,
-              },
-              {
-                label: "Pending",
-                value: counts.pending,
-                icon: Clock3,
-              },
-              {
-                label: "Accepted / Active",
-                value: counts.accepted,
-                icon: CheckCircle2,
-              },
-              {
-                label: "Referred",
-                value: counts.referred,
-                icon: TrendingUp,
-              },
+              { label: "Available Opportunities", value: counts.availableOpportunities, icon: Search },
+              { label: "Total Requests", value: counts.total, icon: FileText },
+              { label: "Pending", value: counts.pending, icon: Clock3 },
+              { label: "Accepted / Active", value: counts.accepted, icon: CheckCircle2 },
+              { label: "Referred", value: counts.referred, icon: TrendingUp },
             ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-[28px] border border-white/10 bg-white/5 p-6"
-              >
+              <div key={item.label} className="rounded-[28px] border border-white/10 bg-white/5 p-6">
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/10">
                   <item.icon className="text-cyan-300" />
                 </div>
-                <h2 className="text-4xl font-black">
-                  {item.value}
-                </h2>
-                <p className="mt-2 text-zinc-400">
-                  {item.label}
-                </p>
+                <h2 className="text-4xl font-black">{item.value}</h2>
+                <p className="mt-2 text-zinc-400">{item.label}</p>
               </div>
             ))}
           </div>
@@ -234,6 +223,13 @@ export default function CandidateDashboardPage() {
                         >
                           {referral.status}
                         </span>
+                      </div>
+                      <div className="mt-5">
+                        <ReferralTimeline
+                          status={referral.status}
+                          createdAt={referral.createdAt}
+                          updatedAt={referral.updatedAt}
+                        />
                       </div>
                     </div>
                   ))}

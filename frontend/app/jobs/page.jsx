@@ -13,7 +13,7 @@ export default function JobsPage() {
   const [loading, setLoading] =
     useState(true);
 
-  // FETCH JOBS
+  // FETCH OPPORTUNITIES
   useEffect(() => {
 
     const fetchJobs = async () => {
@@ -21,7 +21,7 @@ export default function JobsPage() {
       try {
 
         const response = await fetch(
-          apiUrl("/api/jobs")
+          apiUrl("/api/opportunities")
         );
 
         const data =
@@ -77,12 +77,11 @@ export default function JobsPage() {
           <div>
 
             <h1 className="text-5xl font-bold">
-              Explore Jobs 🚀
+              Explore Referral Opportunities 🚀
             </h1>
 
             <p className="text-zinc-400 mt-3">
-              Discover startup opportunities
-              and elite tech roles.
+              Discover referral-first opportunities shared by verified employees.
             </p>
 
           </div>
@@ -91,7 +90,7 @@ export default function JobsPage() {
             href="/create-job"
             className="px-6 py-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-black font-bold hover:scale-[1.02] transition-all duration-300 text-center"
           >
-            Post a Job
+            Post an Opportunity
           </Link>
 
         </div>
@@ -123,9 +122,9 @@ export default function JobsPage() {
                   📍 {job.location}
                 </p>
 
-                {/* JOB TYPE */}
+                {/* OPTIONAL TAG */}
                 <div className="inline-block px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm mb-5">
-                  {job.jobType}
+                  {job.experienceRequirement || "Open"}
                 </div>
 
                 {/* DESCRIPTION */}
@@ -136,18 +135,9 @@ export default function JobsPage() {
                 {/* SKILLS */}
                 <div className="flex flex-wrap gap-3 mb-8">
 
-                  {job.skills?.map(
-                    (skill, index) => (
-
-                      <span
-                        key={index}
-                        className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm"
-                      >
-                        {skill}
-                      </span>
-
-                    )
-                  )}
+                  {job.requiredSkills?.map((skill, index) => (
+                    <span key={index} className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm">{skill}</span>
+                  ))}
 
                 </div>
 
@@ -156,16 +146,9 @@ export default function JobsPage() {
 
                   <div>
 
-                    <p className="text-zinc-500 text-sm">
-                      Posted by
-                    </p>
+                    <p className="text-zinc-500 text-sm">Posted by</p>
 
-                    <p className="font-semibold">
-                      {
-                        job.postedBy
-                          ?.name
-                      }
-                    </p>
+                    <p className="font-semibold">{job.createdBy?.name}</p>
 
                   </div>
 

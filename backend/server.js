@@ -38,6 +38,7 @@ const uploadRoutes = require(
 const adminRoutes = require(
   "./routes/adminRoutes"
 );
+const opportunityRoutes = require("./routes/opportunityRoutes");
 
 // =========================
 // APP
@@ -99,6 +100,11 @@ app.use(
 app.use(
   "/api/admin",
   adminRoutes
+);
+
+app.use(
+  "/api/opportunities",
+  opportunityRoutes
 );
 
 

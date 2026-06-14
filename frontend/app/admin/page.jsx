@@ -188,31 +188,21 @@ export default function AdminPage() {
         )}
 
         {stats && (
-          <div className="mb-8 grid gap-5 md:grid-cols-3">
+          <div className="mb-8 grid gap-5 md:grid-cols-3 lg:grid-cols-4">
             {[
-              {
-                label: "Total Users",
-                value: stats.totalUsers,
-              },
-              {
-                label: "Total Jobs",
-                value: stats.totalJobs,
-              },
-              {
-                label: "Applications",
-                value: stats.totalApplications,
-              },
+              { label: "Total Users", value: stats.totalUsers },
+              { label: "Verified Employees", value: stats.verifiedEmployees },
+              { label: "Candidates", value: stats.candidates },
+              { label: "Opportunities", value: stats.totalOpportunities },
+              { label: "Referral Requests", value: stats.totalReferralRequests },
+              { label: "Referrals", value: stats.totalReferrals },
+              { label: "Interviews", value: stats.interviews },
+              { label: "Offers", value: stats.offers },
+              { label: "Hires", value: stats.hires },
             ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-[28px] border border-white/10 bg-white/5 p-6"
-              >
-                <p className="text-zinc-400">
-                  {item.label}
-                </p>
-                <h2 className="mt-3 text-4xl font-black text-cyan-300">
-                  {item.value}
-                </h2>
+              <div key={item.label} className="rounded-[28px] border border-white/10 bg-white/5 p-6">
+                <p className="text-zinc-400">{item.label}</p>
+                <h2 className="mt-3 text-4xl font-black text-cyan-300">{item.value ?? 0}</h2>
               </div>
             ))}
           </div>

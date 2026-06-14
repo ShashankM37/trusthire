@@ -40,13 +40,25 @@ const referralSchema = new mongoose.Schema(
         "Rejected",
         "In Progress",
         "Referred",
+        "Interview Received",
+        "Interview Completed",
+        "Offer Received",
+        "Hired",
       ],
       default: "Pending",
+    },
+    opportunity: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Opportunity",
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Ensure unique referral per candidate + employee + opportunity
+// Use sparse index so legacy referrals without opportunity are unaffected
+referralSchema.index({ candidate: 1, employee: 1, opportunity: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("Referral", referralSchema);
