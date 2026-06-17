@@ -42,6 +42,9 @@ const sendReferralRequest = async (req, res) => {
     // Ensure sender has a resume
     const sender = await User.findById(senderId);
 
+    console.log("SENDER:", sender);
+    console.log("SENDER RESUME:", sender?.resume);
+
     const hasResume = sender?.resume && (sender.resume.url || typeof sender.resume === "string");
 
     if (!hasResume) {

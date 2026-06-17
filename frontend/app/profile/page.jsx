@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   UploadCloud,
@@ -17,7 +17,6 @@ import {
   Star,
   TrendingUp,
   Building2,
-  Linkedin,
   Github,
   Code2,
   Link2,
@@ -28,19 +27,15 @@ import { apiUrl } from "@/lib/api";
 
 export default function ProfilePage() {
 
-  const [user, setUser] =
-    useState(() => {
-      if (typeof window === "undefined") {
-        return null;
-      }
+const [user, setUser] = useState(null);
 
-      const storedUser =
-        localStorage.getItem("user");
+useEffect(() => {
+  const storedUser = localStorage.getItem("user");
 
-      return storedUser
-        ? JSON.parse(storedUser)
-        : null;
-    });
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+}, []);
 
   const [resume, setResume] =
     useState(null);
@@ -54,17 +49,17 @@ export default function ProfilePage() {
   const [message, setMessage] =
     useState("");
 
-  const [profileForm, setProfileForm] =
-    useState(() => ({
-      company: user?.company || "",
-      linkedin: user?.linkedin || "",
-      github: user?.github || "",
-      leetcode: user?.leetcode || "",
-      codeforces: user?.codeforces || "",
-      hackerrank: user?.hackerrank || "",
-      portfolio: user?.portfolio || "",
-      location: user?.location || "",
-    }));
+ const [profileForm, setProfileForm] =
+  useState(() => ({
+    company: user?.company || "",
+    linkedIn: user?.linkedIn || "",
+    github: user?.github || "",
+    leetcode: user?.leetcode || "",
+    codeforces: user?.codeforces || "",
+    hackerrank: user?.hackerrank || "",
+    portfolio: user?.portfolio || "",
+    location: user?.location || "",
+  }));
 
   // =========================
   // HANDLE FILE CHANGE
@@ -189,8 +184,8 @@ export default function ProfilePage() {
             body: JSON.stringify({
               company:
                 profileForm.company,
-              linkedin:
-                profileForm.linkedin,
+              linkedIn:
+                profileForm.linkedIn,
               github:
                 profileForm.github,
               leetcode:
@@ -510,12 +505,12 @@ export default function ProfilePage() {
                 <div className="mt-8 flex gap-4">
 
                   <a
-                    href={user?.linkedin || "#"}
+                    href={user?.linkedIn || "#"}
                     target="_blank"
                     className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-cyan-400/40 hover:bg-cyan-500/10"
                   >
 
-                    <Linkedin size={22} />
+                    <Link2 size={22} />
 
                   </a>
 
@@ -826,21 +821,21 @@ export default function ProfilePage() {
 
                 <div className="flex items-center rounded-2xl border border-white/10 bg-black/30 px-5 focus-within:border-cyan-400">
 
-                  <Linkedin
+                  <Link2
                     className="text-zinc-500"
                     size={20}
                   />
 
                   <input
-                    value={profileForm.linkedin}
+                    value={profileForm.linkedIn}
                     onChange={(event) =>
                       setProfileForm({
                         ...profileForm,
-                        linkedin:
+                        linkedIn:
                           event.target.value,
                       })
                     }
-                    placeholder="https://www.linkedin.com/in/your-profile"
+                    placeholder="https://www.linkedIn.com/in/your-profile"
                     className="w-full bg-transparent px-4 py-4 outline-none placeholder:text-zinc-500"
                   />
 

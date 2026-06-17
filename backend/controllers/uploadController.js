@@ -30,33 +30,22 @@ const uploadResume = async (
 
     }
 
-    // UPLOAD TO CLOUDINARY
-    const result =
-      await cloudinary.uploader.upload(
-        req.file.path,
-        {
-          resource_type: "raw",
-
-          folder:
-            "trusthire-resumes",
-        }
-      );
 
     // UPDATE USER
-    const user =
-      await User.findById(userId);
+const user = await User.findById(userId);
 
-    user.resume = result.secure_url;
+user.resume = {
+  url: req.file.path,
+  public_id: req.file.filename,
+};
 
-    await user.save();
+await user.save();
 
-    res.status(200).json({
-      success: true,
-      message:
-        "Resume uploaded successfully 🚀",
-      resume:
-        result.secure_url,
-    });
+res.status(200).json({
+  success: true,
+  message: "Resume uploaded successfully 🚀",
+  resume: req.file.path,
+});
 
   } catch (error) {
 
